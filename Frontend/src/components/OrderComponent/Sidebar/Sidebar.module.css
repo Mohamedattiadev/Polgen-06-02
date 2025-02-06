@@ -1,0 +1,186 @@
+/* Sidebar styles */
+
+.sidebar {
+  background-color: var(--secondary-bg-color);
+  width: 65px; /* Collapsed width */
+  transition: width 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transition */
+  overflow: hidden;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  padding: 0 1px;
+  height: calc(100vh - 60px); /* Adjust for fixed header */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for a cleaner look */
+  z-index: 999;
+}
+
+.sidebar.open {
+  width: 220px; /* Expanded width */
+  transition: width 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transition */
+}
+
+.sidebar.closed-mobile {
+  transform: translateX(-100%); /* Hide sidebar on mobile */
+  transition: transform 0.1s ease-in-out; /* Ensure smooth transition for mobile */
+}
+
+.nav {
+  flex-grow: 1;
+  margin-top: 8px;
+}
+
+.nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  /* margin-top: 5px; */
+  margin-bottom: 13px; /* Slightly increased spacing for better alignment */
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 15px 15px;
+  border-radius: 6px; /* Softer corners for modern design */
+  cursor: pointer;
+  color: var(--primary-text-color);
+  transition: all 0.2s ease-out;
+}
+
+/* Modify the navLink hover effect */
+.navLink:hover {
+  background-color: var(--primary-bg-color);
+  transform: scale(1); /* Reduced scale for subtler effect */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle elevation on hover */
+}
+
+/* Enhance active/selected state */
+.navLink.active,
+.navLink.selected {
+  background-color: var(--accent-color);
+  color: var(--primary-bg-color);
+  box-shadow: 0 0 10px rgba(var(--accent-color-rgb), 0.3); /* Soft glow effect */
+  transform: scale(1.02);
+}
+
+/* Adjust active state for collapsed sidebar */
+.sidebar:not(.open) .navLink.active,
+.sidebar:not(.open) .navLink.selected {
+  background-color: var(--accent-color);
+  color: var(--primary-bg-color);
+  width: 85%; /* Slightly reduced for better visual */
+  margin: 0 auto;
+  padding: 10px 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Refine hover effect for collapsed sidebar */
+.sidebar:not(.open) .navLink:hover {
+  /* background-color: rgba(var(--accent-color-rgb), 0.1); */
+  transform: scale(1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Icon styles */
+.icon {
+  font-size: 1.4rem; /* Slightly increased size for better visibility */
+  min-width: 40px; /* Ensure icons are aligned even if the sidebar is collapsed */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center icon in its container */
+}
+
+/* Label styles */
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 1;
+  /* margin-left: 10px; */
+  white-space: nowrap; /* Prevent text from wrapping */
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar:not(.open) .label {
+  opacity: 0;
+  pointer-events: none; /* Prevent interaction when hidden */
+  transform: translateX(-10px); /* Smoothly hide text */
+}
+
+/* Sign Out Button */
+.signOut {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 6px; /* Softer corners for better design */
+  cursor: pointer;
+  color: var(--primary-text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.signOut:hover {
+  background-color: rgba(255, 0, 0, 0.1); /* Subtle red hover background */
+}
+
+.signOut .icon {
+  font-size: 1.4rem;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signOut .label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    width: 220px;
+  }
+
+  .navLink {
+    padding: 12px 10px; /* Adjust padding for smaller screens */
+  }
+
+  .icon {
+    font-size: 1.2rem;
+    min-width: 35px;
+  }
+
+  .label {
+    font-size: 0.8rem; /* Adjust text size for smaller screens */
+  }
+
+  .signOut {
+    padding: 10px 10px;
+  }
+
+  .signOut .icon {
+    font-size: 1.2rem;
+    min-width: 35px;
+  }
+
+  .signOut .label {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,202 @@
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65); /* Overlay background */
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.popupContainer {
+  background: var(--secondary-bg-color); /* Background using global variable */
+  border-radius: 16px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  /* width: 90%; */
+  height: 65%;
+  /* max-height: 800px; */
+  width: 900px;
+  max-width: 1250px;
+  padding: 2rem;
+  animation: slideIn 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color); /* Border color from global variable */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Disable horizontal scrolling */
+}
+
+.popupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.popupHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--primary-text-color); /* Primary text color */
+  font-weight: bold;
+}
+
+/* Close Button */
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+  color: var(--primary-text-color); /* Consistent text color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.closeButton:hover {
+  background: var(--error-color-dark); /* Error color for hover */
+  color: var(--secondary-bg-color);
+}
+
+/* Popup Content */
+.popupContent {
+  font-size: 1rem;
+  color: var(--primary-text-color);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem; /* Add space between elements */
+}
+
+.popupContent p {
+  margin-bottom: 10px;
+}
+
+.popupContent strong {
+  font-weight: bold;
+  color: var(--primary-text-color);
+}
+
+/* Subject Input */
+.subjectInput {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--secondary-bg-color);
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  margin-bottom: 1rem; /* Space between subject and message */
+  transition: border-color 0.2s ease;
+}
+
+.subjectInput:focus {
+  border-color: var(--primary-color); /* Highlight border on focus */
+  outline: none;
+}
+
+/* Textarea for Message */
+.messageInput {
+  width: 100%;
+  height: 120px;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--secondary-bg-color);
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: none;
+  transition: border-color 0.2s ease;
+}
+
+.messageInput:focus {
+  border-color: var(--primary-color); /* Highlight border on focus */
+  outline: none;
+}
+
+/* Send Button */
+.sendButton {
+  background-color: var(--accent-color);
+  color: var(--secondary-bg-color);
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block; /* Ensure button behaves like an inline-block */
+  margin-top: 10px; /* Add spacing above the button */
+}
+
+.sendButton:hover {
+  background-color: var(--success-color); /* Change color on hover */
+}
+
+/* Scrollbar Customization */
+.popupContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.popupContainer::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.popupContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-text-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .popupContainer {
+    width: 95%;
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .messageInput {
+    height: 100px; /* Reduce textarea height on small screens */
+  }
+
+  .sendButton {
+    font-size: 1rem; /* Adjust font size for smaller screens */
+  }
+}

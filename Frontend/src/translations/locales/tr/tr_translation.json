@@ -1,0 +1,156 @@
+{
+  "about_company": {
+      "title": "Şirket Profili",
+      "description": "2016 yılında Hüseyin ERYİĞİT tarafından kurulan POLGEN Biyoteknoloji A.Ş., biyoteknoloji alanındaki yenilikçi çalışmalarını sürdürmektedir. Sağladığı hizmetlerin yanı sıra, Ar-Ge projeleriyle sürekli kendini yenileyerek, alanında başarılı bir şirket olmayı hedeflemektedir."
+  },
+  "mission_vision": {
+      "title": "Vizyon & Misyon",
+      "description": "POLGEN Biyoteknoloji A.Ş., Hüseyin ERYİĞİT tarafından 2016 yılında bir start-up olarak kuruldu ve biyoteknoloji alanındaki yenilikçi çalışmalara devam etmektedir. Sürekli olarak Ar-Ge projeleriyle kendini yenileyerek, alanında başarılı bir şirket olmayı hedeflemektedir."
+  },
+  "ar_ge": {
+      "title": "TÜBİTAK-TEYDEB 1507: CRISPR Tabanlı Genom Düzenleme Kiti Geliştirilmesi",
+      "description": "POLGEN, genom düzenleme ve biyoteknolojik araçları geliştirmeye yönelik ileri düzey Ar-Ge projeleri yürüterek, erişilebilir, verimli ve yenilikçi çözümler yaratmaktadır.",
+      "project_1_title": "CRISPR Genom Düzenleme Teknolojisi",
+      "project_1_description": "POLGEN, araştırmacılara akademik ve endüstriyel uygulamalar için hassas genom düzenleme imkanları sunmak amacıyla ileri düzey CRISPR araçları geliştirmektedir.",
+      "project_2_title": "İleri Düzey CRISPR Çözümleri",
+      "project_2_description": "Biyoteknoloji ve tıp alanındaki özel ihtiyaçlara yönelik inovatif genetik mühendislik ve CRISPR çözümleri.",
+      "project_3_title": "Mikrobiyom ve Genetik Analiz",
+      "project_3_description": "Çeşitli alanlarda araştırma ve tanı hızlandırmak için kapsamlı mikrobiyom çalışmaları ve genetik analiz hizmetleri."
+  },
+  "contact": {
+      "title": "Bize Ulaşın",
+      "description": "Sizden haber almak isteriz! Aşağıdaki formu doldurabilir veya bizimle şu adresten iletişime geçebilirsiniz:",
+      "email": "Email: contact@example.com",
+      "form": {
+          "name": "Ad",
+          "email": "Email",
+          "message": "Mesaj",
+          "submit": "Gönder",
+          "loading": "Gönderiliyor...",
+          "success": "Mesajınız başarıyla gönderildi!",
+          "error": "Bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+      }
+  },
+  "covid_19": {
+      "title": "POLGEN Gelişmiş SARS-CoV-2 Tespit ve Tanı Kiti",
+      "description": "Bu tanı kiti, insan biyolojik örneklerinden çıkarılan SARS-CoV-2 RNA dizilerini hassas bir şekilde tanımlamak için tasarlanmış olup, yaklaşık bir saat içinde sonuç sağlayan ileri düzey qPCR teknolojisi kullanmaktadır; kullanılan qPCR cihazına bağlı olarak küçük varyasyonlar olabilir.",
+      "stat1": {
+          "value": "98.5%",
+          "label": "Analitik Duyarlılık",
+          "description": "Bu yüksek analitik duyarlılık %98.5, SARS-CoV-2 RNA'nın bile iz miktarlarını doğru bir şekilde tespit eder, yanlış negatiflerin olasılığını azaltır."
+      },
+      "stat2": {
+          "value": "99.2%",
+          "label": "Analitik Özgüllük",
+          "description": "Bu kit, %99.2 gibi etkileyici bir özgüllük oranına sahiptir ve genetik varyasyonlar veya diğer koronavirüsler mevcut olsa bile yanlış pozitiflerin önlenmesine yardımcı olur."
+      },
+      "stat3": {
+          "value": "98.8%",
+          "label": "Genel Tanısal Doğruluk",
+          "description": "Kitin genel tanısal doğruluğu %98.8'dir ve güvenilir sonuçlar sağlayarak, sağlık hizmetlerinde etkili kararlar alınmasına yardımcı olur."
+      }
+  },
+  "main": {
+      "slider_1": "SONRAKİ NESİL SIRALAMA ",
+      "slider_2": "KORONAVİRÜS TESPİT KİTİ",
+      "slider_3": "BİOİNFORMATİK ANALİZLER",
+      "sections": [
+          {
+              "title": "Koronavirüs Test Kiti",
+              "description": "POLGEN Koronavirüs Test Kiti, SARS-CoV-2'yi hızlı ve doğru bir şekilde tespit etmek için gelişmiş qPCR teknolojisi kullanarak sağlık profesyonelleri için güvenilir sonuçlar sağlar.",
+              "imgSrc": "/Polgen.jpg"
+          },
+          {
+              "title": "Büyük Veri Çözümleri",
+              "description": "POLGEN, araştırma ve geliştirmeyi hızlandırmak için de novo genom montajı, RNASeq analizi ve gen ontolojisi profilini içeren yenilikçi büyük veri analiz hizmetleri sunmaktadır.",
+              "imgSrc": "/BigData.jpg"
+          }
+      ]
+  },
+  "services": {
+      "title": "Hizmetlerimiz",
+      "service_1_title": "Biyosahiplik Analizleri",
+      "service_1_desc": "İhtiyaçlarınıza özel kapsamlı biyosahiplik analizleri.",
+      "service_1_sub_1": "DNA Sıralaması",
+      "service_1_sub_2": "RNA Sıralaması",
+      "service_1_sub_3": "Epigenom Sıralaması",
+      "service_2_title": "Sonraki Nesil Sıralama",
+      "service_2_desc": "İleri düzey araştırmalar için gelişmiş sıralama hizmetleri.",
+      "service_2_sub_1": "Mikrobiyom Sıralaması",
+      "service_2_sub_2": "Tek Hücre Sıralaması",
+      "service_2_sub_3": "Transkriptom Analizi",
+      "service_3_title": "Biyoenformatik",
+      "service_3_desc": "Araştırmalarınızı desteklemek için kapsamlı biyoenformatik analizler.",
+      "service_3_sub_1": "Standart Analizler",
+      "service_3_sub_2": "Özel Pipelineler",
+      "service_4_title": "CRISPR",
+      "service_4_desc": "Yüksek hassasiyetli CRISPR tabanlı genom düzenlemesi.",
+      "service_5_title": "Covid-19 Test Kitleri",
+      "service_5_desc": "Doğru ve güvenilir Covid-19 tespit kitleri.",
+      "service_6_title": "Maymun Çiçeği Virüsü Test Kitleri",
+      "service_6_desc": "Maymun çiçeği virüsünü tespit etmek için özel kitler."
+  },
+  "login": {
+      "title": "Giriş Yap",
+      "email": "Email",
+      "password": "Şifre",
+      "submit": "Giriş Yap",
+      "no_account": "Hesabınız yoksa, lütfen ",
+      "signup": "Kayıt Ol",
+      "error_message": "Geçersiz kullanıcı adı veya şifre",
+      "forgot_password": "Şifremi Unuttum?"
+  },
+  "reset_password": {
+      "title": "Şifreyi Sıfırla",
+      "new_password": "Yeni şifrenizi girin",
+      "confirm_password": "Yeni şifrenizi onaylayın",
+      "submit": "Şifreyi Sıfırla",
+      "loading": "Sıfırlanıyor...",
+      "success_message": "Şifreniz başarıyla sıfırlandı! Giriş sayfasına yönlendiriliyorsunuz...",
+      "error_message": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+      "passwords_do_not_match": "Şifreler eşleşmiyor."
+  },
+  "forgot_password": {
+      "title": "Şifrenizi Unuttunuz",
+      "email_placeholder": "Email adresinizi girin",
+      "submit": "Sıfırlama Bağlantısı Gönder",
+      "loading": "Gönderiliyor...",
+      "success_message": "Şifre sıfırlama bağlantısı email adresinize gönderildi.",
+      "email_not_found": "Email adresi kayıtlarımızda bulunamadı.",
+      "error_message": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin."
+  },
+  "register": {
+      "title": "Kayıt Ol",
+      "username": "Kullanıcı Adı",
+      "email": "Email",
+      "password": "Şifre",
+      "phone": "Telefon",
+      "address": "Adres",
+      "submit": "Gönder",
+      "success": "Kullanıcı başarıyla kaydedildi! Giriş bilgileri için emailinizi kontrol edin.",
+      "already_have_account": "Zaten bir hesabınız var mı?",
+      "password_requirements": "Şifre en az 8 karakterden oluşmalı, bir büyük harf, bir özel karakter ve bir rakam içermelidir.",
+      "all_fields_required": "Tüm alanlar (kullanıcı adı, email, şifre, telefon, adres) zorunludur.",
+      "registration_failed": "Kayıt başarısız oldu. Lütfen daha sonra tekrar deneyin.",
+      "success_message": "Başarıyla kayıt oldunuz! Devam etmek için giriş yapın."
+  },
+  "navbar": {
+      "about_us": "Hakkımızda",
+      "contact_us": "Bize Ulaşın",
+      "our_services": "Hizmetlerimiz",
+      "covid_19_test": "Covid-19 Testi",
+      "ar_ge": "Ar-Ge"
+  },
+  "footer": {
+      "company_name": "POLGEN Biyoteknoloji",
+      "description": "CRISPR, Biyosahiplik Analizi, Sonraki Nesil Sıralama, Biyoenformatik Analiz, Koronavirüs Test Kiti, PCR Cihazı",
+      "address": "Vedik OSB, 1453. Cad., No: 3, 06378 Yenimahalle, ANKARA",
+      "phone": "P: +90 312 395 5795",
+      "mobile_phone": "P (m): +90 506 051 13 63",
+      "email": "e-mail: info@polgen.com.tr",
+      "social_media": {
+          "twitter": "Twitter",
+          "linkedin": "LinkedIn"
+      }
+  }
+}

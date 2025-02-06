@@ -1,0 +1,68 @@
+/* Layout Container */
+.layoutContainer {
+  display: flex;
+  min-height: 100vh; /* Ensure full viewport height */
+  background-color: var(--primary-bg-color); /* Dynamic primary background based on theme */
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 0 0 250px; /* Fixed width for the sidebar */
+  background-color: var(--secondary-bg-color); /* Sidebar background matches theme */
+  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for better visual separation */
+  transition: transform 0.3s ease-in-out; /* Smooth opening/closing animation */
+}
+
+.sidebar.closed {
+  transform: translateX(-250px); /* Hide the sidebar when closed */
+}
+
+.sidebar.open {
+  transform: translateX(0); /* Show the sidebar when open */
+}
+
+/* Main Content */
+.mainContent {
+  flex-grow: 1; /* Take the remaining width after the sidebar */
+  padding: 80px 25px 80px 85px; /* Adjust padding to align with the sidebar width and navbar height */
+  background-color: var(--primary-bg-color); /* Matches the overall theme background */
+  color: var(--primary-text-color); /* Ensure text contrast matches theme */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  transition: padding-left 0.3s ease-in-out; /* Smooth transition when sidebar is toggled */
+}
+
+.mainContent.sidebar-open {
+  padding-left: 250px; /* Adjust padding when the sidebar is open */
+}
+
+.mainContent.sidebar-closed {
+  padding-left: 85px; /* Adjust padding when the sidebar is closed */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute; /* Sidebar overlays the content on smaller screens */
+    height: 100%;
+    z-index: 1000; /* Ensure sidebar stays on top of content */
+  }
+
+  .sidebar.closed {
+    transform: translateX(-100%); /* Fully hide the sidebar on mobile */
+  }
+
+  .mainContent {
+    padding: 80px 15px; /* Reduce padding for smaller screens */
+  }
+
+  .mainContent.sidebar-open {
+    padding-left: 0; /* No padding when sidebar is open on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .mainContent {
+    padding: 60px 10px; /* Further reduce padding for very small screens */
+  }
+}
+

@@ -1,0 +1,38 @@
+.languageSwitcher {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 18px;
+  right: 0;
+  background-color: white;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 999; /* Ensure it appears above other elements */
+}
+
+.languageSwitcher:hover .dropdown {
+  display: flex;
+}
+
+.dropdown button {
+  background: none;
+  border: none;
+  color: black;
+  cursor: pointer;
+  margin: 4px 0;
+  padding: 4px 8px;
+  text-align: left;
+  width: 100%;
+  z-index: 2;
+}
+
+.dropdown button:hover {
+  background-color: #f1f1f1;
+}
+

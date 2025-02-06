@@ -1,0 +1,21 @@
+/* Shared Full Page Container for Login and Register Pages */
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: var(--primary-text-color); /* Ensure text color matches theme */
+    background-color: var(--primary-bg-color);
+  /* padding: 20px; */
+  margin:0;
+  border-radius: 8px; /* Add subtle rounded corners */
+}
+
+/* Responsive Design for Small Screens */
+@media (max-width: 576px) {
+  .pageContainer {
+    padding: 15px; /* Adjust padding for smaller screens */
+    height: auto; /* Allow container to adjust height */
+  }
+}
+

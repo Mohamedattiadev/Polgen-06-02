@@ -1,0 +1,80 @@
+/* Dashboard Container */
+.dashboard-container {
+  background-color: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard Title */
+.dashboard-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--primary-text-color);
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 10px;
+}
+
+/* UserStaticTables Component Styling */
+.table-container {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.MuiTableContainer-root {
+  background-color: var(--secondary-bg-color);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.MuiTable-root {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Table Header */
+.MuiTableHead-root .MuiTableCell-root {
+  background-color: var(--accent-color);
+  color: var(--primary-bg-color);
+  font-weight: bold;
+  text-align: center;
+  padding: 16px;
+}
+
+/* Table Body */
+.MuiTableBody-root .MuiTableCell-root {
+  text-align: center;
+  padding: 16px;
+}
+
+.MuiTableBody-root tr:nth-child(even) {
+  background-color: var(--secondary-bg-color);
+}
+
+.MuiTableBody-root tr:nth-child(odd) {
+  background-color: var(--primary-bg-color);
+}
+
+/* Responsive Table Adjustments */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 15px;
+  }
+
+  .MuiTableCell-root {
+    padding: 10px;
+  }
+
+  .dashboard-title {
+    font-size: 28px;
+  }
+}
+

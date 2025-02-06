@@ -1,0 +1,134 @@
+/* Wrapper for the entire footer */
+.footer {
+  background-color: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  padding: 20px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 90px;
+}
+
+/* Top Section */
+.footerTop {
+  display: flex;
+  align-items: flex-start; /* Align items to the top */
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  gap: 30px; /* Add space between sections */
+  margin-bottom: 15px;
+}
+
+/* Footer Information Wrapper */
+.footerInfo {
+  margin-top:15px;
+  display: flex;
+    justify-content: space-evenly;
+  gap: 30px; /* Space between company info and contact info */
+  flex-wrap: wrap; /* Stack items on smaller screens */
+  width: 100%; /* Full width to ensure proper alignment */
+}
+
+/* Individual Columns */
+.companyInfo, .contactInfo {
+  max-width: 350px; /* Limit width for consistent layout */
+  flex: 1; /* Allow flexible sizing */
+}
+
+.footerTitle {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 15px;
+}
+
+.footerDescription {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.contactInfo p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+/* Social Media Icons */
+.socialMedia {
+  display: flex;
+  justify-content: center; /* Center icons */
+  align-items: center;
+  gap: 20px; /* Space between icons */
+  margin-top: 20px;
+}
+
+.socialMedia a {
+  font-size: 1.8rem;
+  color: var(--primary-text-color);
+  transition: color 0.3s ease-in-out;
+}
+
+.socialMedia a:hover {
+  color: var(--accent-color); /* Change icon color on hover */
+}
+
+/* Bottom Section */
+.footerBottom {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Responsive Design */
+
+/* For tablets */
+@media (max-width: 992px) {
+  .footerTop {
+    flex-direction: column; /* Stack items vertically */
+    text-align: center; /* Center text */
+    align-items: center; /* Center items */
+  }
+
+  .footerInfo {
+    flex-direction: column; /* Stack company and contact info */
+    align-items: center; /* Center items */
+    gap: 20px; /* Adjust spacing */
+  }
+
+  .footerTitle {
+    font-size: 1.2rem; /* Slightly smaller title font */
+  }
+
+  .footerDescription, .contactInfo p {
+    font-size: 0.85rem; /* Slightly smaller text */
+  }
+
+  .footerBottom {
+    font-size: 0.8rem; /* Adjust footer bottom font size */
+  }
+}
+
+/* For mobile devices */
+@media (max-width: 576px) {
+  .footerInfo {
+    gap: 10px; /* Reduce gap for smaller screens */
+    text-align: center; /* Center-align text */
+  }
+
+  .footerTitle {
+    font-size: 1rem; /* Reduce title font size */
+  }
+
+  .footerDescription, .contactInfo p {
+    font-size: 0.75rem; /* Smaller font size for mobile */
+  }
+
+  .socialMedia {
+    gap: 10px; /* Adjust spacing between icons */
+    font-size: 1.3rem; /* Reduce icon size slightly */
+  }
+
+  .footerBottom {
+    font-size: 0.7rem; /* Smaller text for footer bottom */
+  }
+}
+

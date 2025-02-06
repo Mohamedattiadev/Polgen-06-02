@@ -1,0 +1,184 @@
+/* Table Container */
+.table_container {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap; /* Allow tables to stack on smaller screens */
+}
+
+/* Table Header */
+.table-header {
+  background-color: var(--primary-bg-color); /* Dark blue-gray for header */
+  color: var(--primary-bg-color); /* Light text color */
+  font-weight: 600;
+  text-align: center;
+  padding: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 1.1rem;
+}
+
+/* Table Cell */
+.table-cell {
+  text-align: center;
+  padding: 0.75rem;
+  font-size: 14px;
+  color: var(--primary-text-color); /* Dark gray for regular text */
+}
+
+/* Synthesis Program Table Styling */
+.MuiTableContainer-root {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  background-color: var(
+    --secondary-bg-color
+  ); /* White background for the table */
+  flex: 1;
+  min-width: 45%;
+}
+
+/* Primer Prices Table Styling */
+.MuiTableContainer-root {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  background-color: var(
+    --secondary-bg-color
+  ); /* White background for the table */
+}
+
+/* Row Styling */
+.MuiTableBody-root tr:nth-child(odd) {
+  background-color: #ecf0f1; /* Light gray for odd rows */
+}
+
+.MuiTableBody-root tr:nth-child(even) {
+  background-color: #ffffff; /* White for even rows */
+}
+
+/* Hover effect on rows */
+.MuiTableBody-root tr:hover {
+  background-color: #d5dbdb; /* Light hover effect */
+  cursor: pointer;
+}
+
+/* Material UI Table Styling */
+.MuiTable-root {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 768px) {
+  .table-container {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .MuiTableCell-root {
+    padding: 10px;
+  }
+
+  .MuiTableContainer-root {
+    padding: 12px;
+    min-width: 100%;
+  }
+}
+
+.table {
+  background-color: var(--secondary-bg-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 300px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.table:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.tableBody {
+  padding: 1rem;
+}
+
+.tableRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableRow:hover {
+  background-color: var(--primary-bg-color);
+}
+
+.tableFooter {
+  background-color: var(--primary-bg-color);
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+}
+
+.emptyMessage {
+  text-align: center;
+  padding: 2rem;
+  color: var(--secondary-text-color);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .table {
+    min-width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .tableRow {
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem;
+  }
+
+  .tableCell {
+    width: 100%;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .tableCell:last-child {
+    border-bottom: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .table {
+    max-width: calc(50% - 1rem);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table {
+  animation: fadeIn 0.3s ease-out;
+}

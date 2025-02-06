@@ -1,0 +1,75 @@
+/* Layout Container */
+.layoutContainer {
+  display: flex;
+  height: 100vh; /* Full viewport height */
+  background-color: var(--primary-bg-color); /* Ensure it matches your theme */
+}
+
+/* Navbar */
+.navbar {
+  flex-shrink: 0; /* Prevent shrinking of the navbar */
+  position: sticky; /* Keep the navbar at the top */
+  top: 0;
+  z-index: 1000; /* Ensure it stays above other elements */
+  background-color: var(--primary-bg-color); /* Matches the theme */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for navbar */
+}
+
+/* Main Content */
+.mainContent {
+  flex-grow: 1; /* Allow content to grow and fill the remaining space */
+  padding: 80px 25px 80px 85px; /* Add some padding around the content */
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  background-color: var(--secondary-bg-color); /* Secondary background for contrast */
+  color: var(--primary-text-color); /* Text color aligned with the theme */
+  transition: padding 0.3s ease-in-out; /* Smooth transition when layout changes */
+}
+
+/* Centered Content for Loading and Error States */
+.centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height to center the content vertically */
+  text-align: center;
+  color: var(--primary-text-color); /* Matches the text theme */
+}
+
+/* Spinner Styles */
+.spinner {
+  color: var(--primary-accent-color); /* Set spinner color based on theme */
+  width: 50px !important;
+  height: 50px !important;
+  margin-bottom: 20px;
+}
+
+/* Error Icon Styles */
+.errorIcon {
+  color: red; /* Set a distinct color for error icons */
+  font-size: 48px;
+  margin-bottom: 10px; /* Space between icon and error text */
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 20px; /* Adjust padding for smaller screens */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for lightweight appearance */
+  }
+
+  .mainContent {
+    padding: 70px 15px; /* Reduce padding for compact layout on smaller devices */
+  }
+}
+
+@media (max-width: 480px) {
+  .mainContent {
+    padding: 60px 10px; /* Further reduce padding for very small screens */
+  }
+
+  .navbar {
+    height: 50px; /* Reduce navbar height */
+  }
+}
+

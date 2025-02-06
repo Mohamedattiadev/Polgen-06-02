@@ -1,0 +1,131 @@
+/* Main register container */
+.registerContainer {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  flex-direction: column;
+  height: 100vh; /* Take full height of viewport */
+  background: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  padding: 20px;
+}
+
+/* Register form wrapper */
+.registerForm {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.registerForm:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Form heading */
+.registerForm h3 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: var(--primary-text-color);
+}
+
+/* Error and success messages */
+.errorMessage {
+  color: #e63946;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.successMessage {
+  color: green;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+/* Input fields */
+.inputField {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  outline: none;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.inputField::placeholder {
+  color: var(--accent-color);
+}
+
+.inputField:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px var(--accent-color);
+}
+
+/* Submit button */
+.submitButton {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: linear-gradient(
+    135deg,
+    var(--accent-color),
+    var(--primary-text-color)
+  );
+  color: var(--primary-bg-color);
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    transform 0.3s,
+    background 0.3s;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  background: var(--accent-color);
+  color: var(--primary-text-color);
+}
+
+/* Signup section */
+.signupText {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--primary-text-color);
+}
+
+.signupText a {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signupText a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .registerForm {
+    padding: 20px;
+  }
+
+  .inputField {
+    font-size: 0.9rem;
+  }
+
+  .submitButton {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}

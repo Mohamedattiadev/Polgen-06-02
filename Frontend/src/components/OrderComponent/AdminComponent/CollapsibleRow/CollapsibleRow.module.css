@@ -1,0 +1,4 @@
+.finishAllButton:hover {
+  background-color: var(--success-color);
+  color: white;
+}

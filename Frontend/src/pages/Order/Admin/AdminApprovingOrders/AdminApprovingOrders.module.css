@@ -1,0 +1,62 @@
+.container {
+  padding: 20px;
+  background-color: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  font-family: "Inter", sans-serif;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+.header {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary-text-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.filterButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+  color: var(--primary-bg-color);
+  background-color: var(--accent-color);
+}
+
+.button:hover {
+  background-color: var(--hover-color);
+  transform: translateY(-2px);
+}
+
+.button.active {
+  background-color: var(--success-color);
+}
+
+.tableContainer {
+  margin-top: 20px;
+  background-color: var(--secondary-bg-color);
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.noResults {
+  text-align: center;
+  font-size: 1rem;
+  color: var(--secondary-text-color);
+  margin-top: 20px;
+}

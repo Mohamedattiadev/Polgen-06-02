@@ -1,0 +1,121 @@
+/* Full Page Container */
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--primary-bg-color);
+  padding: 20px;
+  color: var(--primary-text-color); /* Global text color */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Content Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px; /* Increased gap for better spacing between sections */
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Section Styling */
+.section {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  background-color: var(--secondary-bg-color);
+  border-radius: 12px; /* More rounded corners for a modern look */
+  padding: 25px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for hover effect */
+}
+
+.section:hover {
+  transform: translateY(-5px); /* Slight hover effect */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Slight increase in shadow on hover */
+}
+
+/* Image Content */
+.imageContent {
+  flex: 1;
+  display: flex;
+  justify-content: center; /* Center image horizontally */
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover; /* Maintain aspect ratio and fill the container */
+}
+
+/* Text Content */
+.textContent {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px; /* Added gap for spacing between elements */
+}
+
+/* Title */
+.title {
+  font-size: 2rem; /* Increased title size for better emphasis */
+  color: var(
+    --primary-title-color
+  ); /* Assuming the variable is defined for title color */
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Description */
+.description {
+  font-size: 1.1rem;
+  color: var(--primary-text-color);
+  line-height: 1.7;
+  text-align: justify; /* Justify text for better readability */
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .section {
+    flex-direction: column;
+    padding: 20px; /* Less padding for smaller screens */
+  }
+
+  .title {
+    font-size: 1.7rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .imageContent {
+    margin-bottom: 20px; /* Added margin at the bottom for spacing */
+  }
+}
+
+@media (max-width: 576px) {
+  .pageContainer {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+}

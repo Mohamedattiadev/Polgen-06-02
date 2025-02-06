@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--primary-bg-color); /* Match global background */
+  color: var(--primary-text-color); /* Match global text */
+  padding: 20px; /* Avoid cramped design on small screens */
+}
+

@@ -1,0 +1,130 @@
+/* Main login container */
+.loginContainer {
+  display: flex;
+
+  margin-top: 0;
+  justify-content: center; /* Center horizontally */
+  flex-direction: column;
+  align-items: center; /* Center vertically */
+
+  height: 100vh; /* Take full height of viewport */
+
+  /* background: linear-gradient(135deg, var(--primary-bg-color), var(--secondary-bg-color)); */
+  color: var(--primary-text-color);
+
+  background: var(--primary-bg-color);
+  padding: 20px;
+}
+
+/* Login form wrapper */
+.loginForm {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  /* background-color: var(--secondary-bg-color); */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.loginForm:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Form heading */
+.loginForm h3 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: var(--primary-text-color);
+}
+
+/* Error message */
+.errorMessage {
+  color: #e63946;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+/* Input fields */
+.inputField {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  outline: none;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.inputField::placeholder {
+  color: var(--accent-color);
+}
+
+.inputField:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px var(--accent-color);
+}
+
+/* Login button */
+.loginButton {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: linear-gradient(
+    135deg,
+    var(--accent-color),
+    var(--primary-text-color)
+  );
+  color: var(--primary-bg-color);
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    transform 0.3s,
+    background 0.3s;
+}
+
+.loginButton:hover {
+  transform: translateY(-2px);
+  background: var(--accent-color);
+  color: var(--primary-text-color);
+}
+
+/* Signup section */
+.signup {
+  margin-top: 15px;
+  font-size: 0.85rem;
+}
+
+.signup a {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signup a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .loginForm {
+    padding: 20px;
+  }
+
+  .inputField {
+    font-size: 0.9rem;
+  }
+
+  .loginButton {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}

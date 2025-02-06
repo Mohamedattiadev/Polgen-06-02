@@ -1,0 +1,96 @@
+/* General Container Styles */
+.aboutContainer {
+  padding: 40px;
+  background-color: var(
+    --primary-bg-color
+  ); /* Background color from the global CSS variables */
+  color: var(
+    --primary-text-color
+  ); /* Text color from the global CSS variables */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+/* Section Styles for Mission & Vision */
+.section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  /* gap: 30px; */
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 190px;
+  padding: 20px;
+  background-color: var(--secondary-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Text Content */
+.textContent {
+  flex: 1;
+  max-width: 50%;
+}
+
+.textContent h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--primary-text-color);
+  margin-bottom: 20px;
+}
+
+.textContent p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--secondary-text-color);
+  text-align: justify;
+}
+
+/* Image Content */
+.imageContent {
+  flex: 1;
+  max-width: 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imageContent img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .section {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .textContent {
+    max-width: 90%;
+    text-align: center;
+  }
+
+  .imageContent {
+    max-width: 90%;
+  }
+
+  .textContent h2 {
+    font-size: 1.8rem;
+  }
+
+  .textContent p {
+    font-size: 1rem;
+  }
+}

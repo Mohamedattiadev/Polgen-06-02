@@ -1,0 +1,126 @@
+/* Main container */
+.container {
+  max-width: 600px;
+  margin: 110px auto; /* Adds vertical spacing and centers horizontally */
+  padding: 30px;
+  background: linear-gradient(135deg, var(--primary-bg-color), var(--secondary-bg-color));
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers content within the container */
+  transition: all 0.3s ease;
+}
+
+.container:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Heading */
+.heading {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary-text-color);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Description */
+.description {
+  font-size: 1rem;
+  color: var(--primary-text-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Contact Information */
+.contactInfo {
+  font-size: 0.9rem;
+  color: var(--primary-text-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form styling */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%; /* Ensures form takes full container width */
+}
+
+.label {
+  font-size: 0.9rem;
+  color: var(--primary-text-color);
+}
+
+.input,
+.textarea {
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  width: 100%;
+  background: var(--primary-bg-color);
+  color: var(--primary-text-color);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--accent-color);
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px var(--accent-color);
+}
+
+/* Button */
+.button {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  background: linear-gradient(135deg, var(--accent-color), var(--primary-text-color));
+  color: var(--primary-bg-color);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.3s, background 0.3s;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  background: var(--accent-color);
+  color: var(--primary-text-color);
+}
+
+/* Status message */
+.statusMessage {
+  font-size: 0.9rem;
+  margin-top: 10px;
+  color: var(--accent-color);
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .heading {
+    font-size: 1.5rem;
+  }
+
+  .input,
+  .textarea {
+    font-size: 0.9rem;
+  }
+
+  .button {
+    font-size: 0.9rem;
+  }
+}
+
