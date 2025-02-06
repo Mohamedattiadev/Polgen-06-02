@@ -27,6 +27,7 @@ import AdminApprovedOrders from "../pages/Order/Admin/AdminApprovedOrders/AdminA
 import AdminApprovingOrders from "../pages/Order/Admin/AdminApprovingOrders/AdminApprovingOrders.jsx";
 import AdminSynthingOrders from "../pages/Order/Admin/AdminSynthingOrders/AdminSynthingOrders.jsx";
 import AdminApproveEmail from "../pages/Order/Admin/AdminApproveEmail/AdminApproveEmail.jsx";
+import AdminFinishedOrders from "../pages/Order/Admin/AdminFinishedOrders/AdminFinishedOrders.jsx";
 
 const router = createBrowserRouter([
   {
@@ -76,6 +77,7 @@ const router = createBrowserRouter([
       // { path: "manage-products", element: <AdminTables /> },
       { path: "orders", element: <Orders /> },
       { path: "approvedOrders", element: <AdminApprovedOrders /> },
+      { path: "finishedOrders", element: <AdminFinishedOrders /> },
       { path: "approvingOrders", element: <AdminApprovingOrders /> },
       { path: "synthingOrders", element: <AdminSynthingOrders /> },
       { path: "approveMails", element: <AdminApproveEmail /> },

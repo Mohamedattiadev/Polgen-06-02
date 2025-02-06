@@ -113,12 +113,12 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const savedSelectedProducts = localStorage.getItem("selectedProducts");
-    if (savedSelectedProducts) {
-      setSelectedProducts(JSON.parse(savedSelectedProducts));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const savedSelectedProducts = localStorage.getItem("selectedProducts");
+  //   if (savedSelectedProducts) {
+  //     setSelectedProducts(JSON.parse(savedSelectedProducts));
+  //   }
+  // }, []);
   // Debugging: Log groupNumber whenever it changes
   // Update local storage whenever groupNumber changes
   useEffect(() => {
@@ -766,7 +766,7 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
 
         {/* Conditionally render for Orders or AdminApprovingOrders */}
         {(AdminPageName === "Orders" ||
-          AdminPageName === "AdminApprovingOrders") && (
+          AdminPageName === "AdminApprovingOrders" ) && (
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Box sx={{ color: "var(--primary-text-color)" }}>
               <TextField
