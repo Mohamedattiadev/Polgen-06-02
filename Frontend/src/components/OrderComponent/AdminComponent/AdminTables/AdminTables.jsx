@@ -485,49 +485,67 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
   //----------------------
   //----------------------
   //----------------------
-  const handleBulkApprove = async () => {
-    // Get selected products that are not approved and are not finished
-    const bulkApproveIds = selectedProducts.filter((id) => {
-      const product = rows.find((row) => row.id === id);
-      return product && !product.isApproved && !product.isFinished; // Ensure it's not finished
+const handleBulkApprove = async () => {
+  console.log("Selected Products:", selectedProducts);
+  console.log("Rows Before Approval:", rows);
+
+  const bulkApproveIds = selectedProducts.filter((id) => {
+    const product = rows.find((row) => row.id === id);
+    console.log(`Checking product ${id}:`, product);
+
+    if (!product) {
+      console.warn(`Product ${id} not found.`);
+      return false;
+    }
+
+    console.log(
+      `Product ${id} - isApproved: ${product.isApproved}, isFinished: ${product.isFinished}`
+    );
+
+    const isEligible = !product.isFinished; // Allow approval even if already approved
+    console.log(`Product ${id} eligible for approval:`, isEligible);
+    return isEligible;
+  });
+
+  console.log("Bulk Approve IDs:", bulkApproveIds);
+
+  if (bulkApproveIds.length === 0) {
+    console.warn("No products to approve.");
+    return;
+  }
+
+  setProcessing((prev) => [...prev, ...bulkApproveIds]);
+  console.log("Processing products:", bulkApproveIds);
+
+  try {
+    const response = await updateProduct("all", {
+      productIds: bulkApproveIds,
+      isApproved: true,
     });
 
-    if (bulkApproveIds.length === 0) {
-      return; // Nothing to approve
-    }
+    console.log("Backend response:", response);
 
-    // Mark as processing
-    setProcessing((prev) => [...prev, ...bulkApproveIds]);
+    const updatedRows = rows.map((row) =>
+      bulkApproveIds.includes(row.id) ? { ...row, isApproved: true } : row
+    );
 
-    try {
-      // Send bulk approval request to backend
-      const response = await updateProduct("all", {
-        productIds: bulkApproveIds,
-        isApproved: true,
-      });
+    console.log("Updated Rows:", updatedRows);
+    setRows(updatedRows);
+    setFilteredData(updatedRows);
+    setSelectedProducts([]);
 
-      // Log response
-      console.log("Backend response:", response);
+  } catch (error) {
+    console.error("Error updating products:", error);
+    setError("Failed to approve selected products. Please try again.");
+  } finally {
+    setProcessing((prev) =>
+      prev.filter((id) => !bulkApproveIds.includes(id))
+    );
+    console.log("Processing state after completion:", processing);
+  }
+};
 
-      // Update UI with new approval status
-      const updatedRows = rows.map((row) =>
-        bulkApproveIds.includes(row.id) ? { ...row, isApproved: true } : row,
-      );
 
-      setRows(updatedRows);
-      setFilteredData(updatedRows);
-
-      // Clear selection
-      setSelectedProducts([]);
-    } catch (error) {
-      setError("Failed to approve selected products. Please try again.");
-    } finally {
-      // Remove from processing state
-      setProcessing((prev) =>
-        prev.filter((id) => !bulkApproveIds.includes(id)),
-      );
-    }
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
