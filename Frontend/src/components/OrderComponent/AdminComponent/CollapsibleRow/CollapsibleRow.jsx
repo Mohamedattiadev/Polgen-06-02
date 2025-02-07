@@ -69,28 +69,44 @@ const CollapsibleRow = ({
   };
 
   // Handle finishing all products in the group
-  const handleFinishGroup = async () => {
-    const groupIds = groupedRows.map((r) => r.id);
-    setProcessing((prev) => [...prev, ...groupIds]);
+const handleFinishGroup = async () => {
+  const groupIds = groupedRows.map((r) => r.id);
+  setProcessing((prev) => [...prev, ...groupIds]);
 
-    try {
-      await Promise.all(
-        groupIds.map((id) =>
-          updateProduct(id, { isFinished: true, isWorkingOn: false }),
-        ),
-      );
-      const updatedRows = rows.map((r) =>
-        groupIds.includes(r.id)
-          ? { ...r, isFinished: true, isWorkingOn: false }
-          : r,
-      );
-      setRows(updatedRows);
-    } catch (error) {
-      console.error("Failed to finish group:", error);
-    } finally {
-      setProcessing((prev) => prev.filter((id) => !groupIds.includes(id)));
+  try {
+    // ✅ Update all products at once instead of looping
+    await updateProduct("all", { productIds: groupIds, isFinished: true, isWorkingOn: false });
+
+    // ✅ Update UI
+    const updatedRows = rows.map((r) =>
+      groupIds.includes(r.id) ? { ...r, isFinished: true, isWorkingOn: false } : r
+    );
+    setRows(updatedRows);
+
+    // ✅ Fix: Collect finished products per user
+    const userMap = {};
+
+    groupedRows.forEach((product) => {
+      const userEmail = product.userId; // Assuming `userId` represents the user's email
+      if (!userMap[userEmail]) {
+        userMap[userEmail] = { username: product.username, products: [] };
+      }
+      userMap[userEmail].products.push(product.oligoAdi);
+    });
+
+    // ✅ Send grouped emails per user
+    for (const [userEmail, { username, products }] of Object.entries(userMap)) {
+      await sendFinishedEmail(userEmail, username, products);
     }
-  };
+
+    console.log("📧 Finished email sent for all products in group.");
+  } catch (error) {
+    console.error("Failed to finish group:", error);
+  } finally {
+    setProcessing((prev) => prev.filter((id) => !groupIds.includes(id)));
+  }
+};
+
 
   // Check if any row in the group is selected
   const isAnyRowSelected = groupedRows.some((r) =>

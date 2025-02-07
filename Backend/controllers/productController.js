@@ -106,6 +106,16 @@ export const addProduct = async (req, res) => {
       message: "Products added successfully.",
       products: createdProducts,
     });
+    // Send Confirmation Email
+    const mailOptions = {
+      from: `"Polgen Order Confirmation" <${process.env.SMTP_USER}>`,
+      to: user.email,
+      subject: "Order Confirmation",
+      html: submissionConfirmationTemplate(user.username, createdProducts),
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`📧 Order confirmation email sent to ${user.email}`);
   } catch (error) {
     console.error("Error adding product:", error);
     res.status(500).json({ error: "Failed to add product." });
@@ -169,6 +179,7 @@ export const getProductById = async (req, res) => {
 };
 
 // Update Product
+// Update Product
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   const {
@@ -200,10 +211,15 @@ export const updateProduct = async (req, res) => {
       }
 
       const updatedProducts = [];
+      const userMap = {}; // Store user email mapping for bulk emails
       let currentIndex = 1;
+
       for (const productId of productIds) {
         const product = await Product.findByPk(productId);
         if (!product) continue;
+
+        const user = await User.findByPk(product.userId);
+        if (!user) continue;
 
         await product.update({
           category: category || product.category,
@@ -226,7 +242,39 @@ export const updateProduct = async (req, res) => {
           isFinished:
             isFinished !== undefined ? isFinished : product.isFinished,
         });
+
         updatedProducts.push(product.toJSON());
+
+        if (!userMap[user.email]) {
+          userMap[user.email] = { username: user.username, products: [] };
+        }
+        userMap[user.email].products.push(product.toJSON());
+      }
+
+      const finishedProducts = {}; // Store users who have finished products
+
+      for (const [userEmail, { username, products }] of Object.entries(
+        userMap
+      )) {
+        if (isApproved) {
+          await sendApprovedEmail(userEmail, username, products);
+        }
+        if (isWorkingOn) {
+          await sendWorkingOnEmail(userEmail, username, products);
+        }
+        if (isFinished) {
+          if (!finishedProducts[userEmail]) {
+            finishedProducts[userEmail] = { username, products: [] };
+          }
+          finishedProducts[userEmail].products.push(...products); // Collect all finished products
+        }
+      }
+
+      // Send all finished emails together
+      for (const [userEmail, { username, products }] of Object.entries(
+        finishedProducts
+      )) {
+        await sendFinishedEmail(userEmail, username, products);
       }
 
       return res
@@ -237,6 +285,17 @@ export const updateProduct = async (req, res) => {
       if (!product) {
         return res.status(404).json({ error: "Product not found." });
       }
+
+      const user = await User.findByPk(product.userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
+
+      const previousStatus = {
+        isApproved: product.isApproved,
+        isWorkingOn: product.isWorkingOn,
+        isFinished: product.isFinished,
+      };
 
       await product.update({
         category: category || product.category,
@@ -258,15 +317,26 @@ export const updateProduct = async (req, res) => {
         isFinished: isFinished !== undefined ? isFinished : product.isFinished,
       });
 
+      const productDetails = [product.toJSON()];
+
+      // Send email notifications if status changed
+      if (isApproved && !previousStatus.isApproved) {
+        await sendApprovedEmail(user.email, user.username, productDetails);
+      }
+      if (isWorkingOn && !previousStatus.isWorkingOn) {
+        await sendWorkingOnEmail(user.email, user.username, productDetails);
+      }
+      if (isFinished && !previousStatus.isFinished) {
+        await sendFinishedEmail(user.email, user.username, productDetails);
+      }
+
       return res
         .status(200)
         .json({ message: "Product updated successfully.", product });
     }
   } catch (error) {
     console.error("Error updating product:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to update product.", details: error.message });
+    res.status(500).json({ error: "Failed to update product." });
   }
 };
 
