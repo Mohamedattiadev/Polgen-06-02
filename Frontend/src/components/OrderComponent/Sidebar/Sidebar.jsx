@@ -44,23 +44,17 @@ const Sidebar = ({ userType, isSidebarOpen, toggleSidebar, onSignOut }) => {
   ];
 
   const ADMIN_NAV_ITEMS = [
-    // {
-    //   title: "Dashboard",
-    //   icon: <DashboardIcon />,
-    //   path: `/admin/${username}/dashboard`,
-    // },
-    //
-    //
+  {
+      title: "All Orders",
+      icon: <ShoppingCartIcon />,
+      path: `/admin/${username}/orders`,
+    },
     {
       title: "approving Orders",
       icon: <SummarizeIcon />,
       path: `/admin/${username}/approvingOrders`,
     },
-    {
-      title: "All Orders",
-      icon: <ShoppingCartIcon />,
-      path: `/admin/${username}/orders`,
-    },
+  
     {
       title: "Approved Orders",
       icon: <GradingIcon />,
