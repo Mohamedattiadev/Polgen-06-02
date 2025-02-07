@@ -151,7 +151,7 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
         setFilteredData(updatedRows);
 
         // Increment groupNumber for the next product
-        setGroupNumber((prev) => prev + 1);
+        // setGroupNumber((prev) => prev + 1);
       }
     } catch (error) {
       console.error("Failed to add product:", error);
