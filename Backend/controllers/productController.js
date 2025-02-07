@@ -10,52 +10,91 @@ import {
 
 import { sequelize } from "../models/index.js"; // Correct Sequelize instance import
 
-import { Parser } from "json2csv"; // ✅ Ensure correct import
+
+
+
+
+
+import { Parser } from "json2csv";
+// ✅ Get today's date in YYMMDD format
+function getFormattedDate() {
+  return new Date().toISOString().slice(2, 10).replace(/-/g, ""); // Convert to "YYMMDD"
+}
 
 export const exportProductsCsv = async (req, res) => {
   try {
-    const { products } = req.body; // ✅ Get filtered products from frontend
+    const { products } = req.body;
     if (!products || products.length === 0) {
       return res.status(400).json({ error: "No products provided." });
     }
 
-    // Fetch user details for each product
-    const userIds = [...new Set(products.map((p) => p.userId))]; // ✅ Get unique user IDs
+    // ✅ Extract unique product indexes
+    const productIndexes = [...new Set(products.map((p) => p.productId))];
+
+    // ✅ Fetch only requested products from DB
+    const dbProducts = await Product.findAll({
+      where: { index: productIndexes },
+      attributes: ["category", "modifications", "sekans", "dmt", "index", "oligoAdi", "userId", "GroupId"],
+    });
+
+    // ✅ Fetch users
+    const userIds = [...new Set(dbProducts.map((p) => p.userId))];
     const users = await User.findAll({
       where: { id: userIds },
-      attributes: ["id", "username"], // Fetch only necessary fields
+      attributes: ["id", "username"],
     });
 
-    // Create a map of userId -> username
-    const userMap = {};
-    users.forEach((user) => {
-      userMap[user.id] = user.username;
+    // ✅ Create a user mapping (userId -> username)
+    const userMap = Object.fromEntries(users.map((user) => [user.id, user.username]));
+
+    // ✅ Store **ALL** products (NO DUPLICATES REMOVED)
+    const csvData = dbProducts.map((product) => {
+      const isProbe = product.category?.toLowerCase().includes("probe");
+      const hasFivePrimeModification =
+        Array.isArray(product.modifications) &&
+        product.modifications.some((mod) => mod.includes("5'"));
+
+      // ✅ Add "5" only if necessary
+      let formattedSekans = product.sekans;
+      if (isProbe || hasFivePrimeModification) {
+        formattedSekans = `5${product.sekans}`;
+      }
+
+      // ✅ Generate SentezNo (YYMMDD-GroupId-Index)
+      const sentezNo = `${getFormattedDate()}-${product.GroupId || "N/A"}-${product.index || "N/A"}`;
+
+      return {
+        sekans: formattedSekans,
+        dmt: product.dmt || "DMTOFF",
+        sentezNo,
+        oligoname: product.oligoAdi || "Unnamed",
+        username: userMap[product.userId] || "Unknown",
+      };
     });
 
-    // ✅ Format data for CSV with usernames
-    const csvData = products.map((product) => ({
-      sekans: product.sekans,
-      dmt: product.dmt || "DMTOFF",
-      productId: product.index || "N/A",
-      oligoname: product.oligoAdi,
-      username: userMap[product.userId] || "Unknown", // ✅ Assign username dynamically
-    }));
-
-    const { Parser } = await import("json2csv");
+    // ✅ Convert to CSV
     const parser = new Parser({
-      fields: ["sekans", "dmt", "productId", "oligoname", "username"],
-      header: false,
+      fields: ["sekans", "dmt", "sentezNo", "oligoname", "username"],
+      header: false, // ✅ Removes the first line (header row)
     });
+
     const csv = parser.parse(csvData);
 
     res.header("Content-Type", "text/csv");
     res.attachment("filtered_products.csv");
     res.send(csv);
   } catch (error) {
-    console.error("Error exporting CSV:", error);
+    console.error("❌ Error exporting CSV:", error);
     res.status(500).json({ error: "Failed to export CSV." });
   }
 };
+
+
+
+
+
+
+
 
 export const addProduct = async (req, res) => {
   const { products } = req.body;

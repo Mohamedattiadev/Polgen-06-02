@@ -111,32 +111,44 @@ const AdminDuringProcessTables = ({
   };
 
   const handleGenerateExcel = async () => {
-    try {
-      // Get currently listed products from the state (filteredRows)
-      const products = filteredRows; // Ensure this contains the listed products
+  try {
+    console.log("Products to export:", filteredRows); // Debug: Verify data sent to backend
 
-      // Call the backend API to generate and download the Excel file
-      const response = await axios.post(
-        "http://localhost:5000/api/report/generate-excel", // Backend endpoint
-        { products }, // Send the product list in the request body
-        { responseType: "blob" }, // Important for file downloads
-      );
+    const products = filteredRows; // Ensure this contains the listed products
 
-      // Create a blob link to download the file
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "products_report.xlsx"); // Dynamic file name
-      document.body.appendChild(link);
-      link.click();
+    // Call the backend API to generate and download the Excel file
+    const response = await axios.post(
+      "http://localhost:5000/api/report/generate-excel", // Backend endpoint
+      { products }, // Send the product list in the request body
+      { responseType: "blob" }, // Important for file downloads
+    );
 
-      // Clean up and remove the link
-      link.parentNode.removeChild(link);
-    } catch (error) {
-      console.error("Error downloading Excel file:", error);
+    // Debug: Check if response contains data
+    console.log("Response from backend:", response);
+
+    // Create a blob link to download the file
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "products_report.xlsx"); // Dynamic file name
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up and remove the link
+    link.parentNode.removeChild(link);
+  } catch (error) {
+    console.error("Error downloading Excel file:", error);
+
+    // Display error details to user
+    if (error.response) {
+      console.error("Backend error response:", error.response.data);
+      alert(`Failed to download Excel file: ${error.response.data.message}`);
+    } else {
       alert("Failed to download Excel file. Please try again.");
     }
-  };
+  }
+};
+
 
   const handleA260Submit = async () => {
     console.log("✅ A260 Button Clicked", a260Input);
@@ -374,16 +386,19 @@ const AdminDuringProcessTables = ({
         sekans: product.sekans,
         dmt: product.dmt || "DMTOFF",
         productId: product.index || "N/A",
-        oligoname: product.oligoAdi,
-        userId: product.userId, // ✅ Send userId instead of username
+        oligoname: product.oligoAdi || "Unnamed",
+        isFiveModified: product.hasFiveModification,  // ✅ Ensure this is included
+        category: product.type, // ✅ Ensure probes are marked as "probe"
       }));
-
+  
+      console.log("📤 Sending products for CSV export:", products);
+  
       const response = await axios.post(
         "http://localhost:5000/api/products/export/csv",
-        { products }, // ✅ Send filtered products
-        { responseType: "blob" },
+        { products },
+        { responseType: "blob" }
       );
-
+  
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -396,6 +411,9 @@ const AdminDuringProcessTables = ({
       alert("Failed to download CSV file. Please try again.");
     }
   };
+  
+  
+  
 
   const handleApproveProduct = async (id) => {
     setProcessing((prev) => [...prev, id]);
