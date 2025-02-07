@@ -756,7 +756,7 @@ const handleBulkApprove = async () => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-between",
+              marginLeft: "auto",
               alignItems: "center",
               gap: 2,
             }}
@@ -783,77 +783,110 @@ const handleBulkApprove = async () => {
         )}
 
         {/* Conditionally render for Orders or AdminApprovingOrders */}
-        {(AdminPageName === "Orders" ||
-          AdminPageName === "AdminApprovingOrders" ) && (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ color: "var(--primary-text-color)" }}>
-              <TextField
-                label="Search"
-                variant="outlined"
-                size="small"
-                value={searchQuery}
-                onChange={handleSearch}
-                sx={{
-                  marginRight: 2,
-                  width: 300,
-                }}
-                InputProps={{
-                  sx: {
-                    backgroundColor: "var(--primary-bg-color)",
-                    color: "var(--primary-text-color)",
-                  },
-                }}
-                InputLabelProps={{
-                  sx: {
-                    color: "var(--primary-text-color)",
-                  },
-                }}
-              />
-              <Select
-                value={searchField}
-                onChange={(e) => setSearchField(e.target.value)}
-                size="medium"
-                sx={{
-                  color: "var(--primary-text-color)",
-                  marginRight: 2,
-                  width: 200,
-                }}
-              >
-                <MenuItem value="category">Category</MenuItem>
-                <MenuItem value="oligoAdi">Oligo Name</MenuItem>
-                <MenuItem value="userId">User ID</MenuItem>
-                <MenuItem value="scale">Scale</MenuItem>
-                <MenuItem value="fivePrime">5' Modification</MenuItem>
-                <MenuItem value="threePrime">3' Modification</MenuItem>
-                <MenuItem value="sekans">Sequence</MenuItem>
-                <MenuItem value="uzunluk">Length</MenuItem>
-                <MenuItem value="saflaştırma">Purification</MenuItem>
-                <MenuItem value="totalPrice">Total Price</MenuItem>
-                <MenuItem value="status">Status</MenuItem>
-              </Select>
-            </Box>
-            <div>
-              <Button
-                variant="contained"
-                onClick={handleBulkApprove}
-                className={styles["table-bulk-approve"]}
-                disabled={selectedProducts.length === 0}
-              >
-                Approve All
-              </Button>
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                className={styles["table-bulk-delete"]}
-                onClick={() => setShowBulkDeleteModal(true)}
-                disabled={selectedProducts.length === 0}
-              >
-                Delete All
-              </Button>
-            </div>
-          </Box>
+     {(AdminPageName === "Orders" ||
+  AdminPageName === "AdminApprovingOrders" ||
+  AdminPageName === "AdminApprovedOrders") && (
+  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+    <Box sx={{ color: "var(--primary-text-color)" }}>
+      <TextField
+        label="Search"
+        variant="outlined"
+        size="small"
+        value={searchQuery}
+        onChange={handleSearch}
+        sx={{
+          marginRight: 2,
+          width: 300,
+        }}
+        InputProps={{
+          sx: {
+            backgroundColor: "var(--primary-bg-color)",
+            color: "var(--primary-text-color)",
+          },
+        }}
+        InputLabelProps={{
+          sx: {
+            color: "var(--primary-text-color)",
+          },
+        }}
+      />
+
+        {AdminPageName !== "AdminApprovedOrders" ? ( 
+      <Select
+        value={searchField}
+        onChange={(e) => setSearchField(e.target.value)}
+        size="medium"
+        sx={{
+          color: "var(--primary-text-color)",
+          marginRight: 2,
+          width: 200,
+        }}
+      >
+
+        {/* Conditionally render for AdminApprovedOrders */}
+       
+        <MenuItem value="category">Category</MenuItem>
+        <MenuItem value="oligoAdi">Oligo Name</MenuItem>
+        <MenuItem value="userId">User ID</MenuItem>
+        <MenuItem value="scale">Scale</MenuItem>
+        <MenuItem value="fivePrime">5' Modification</MenuItem>
+        <MenuItem value="threePrime">3' Modification</MenuItem>
+        <MenuItem value="sekans">Sequence</MenuItem>
+        <MenuItem value="uzunluk">Length</MenuItem>
+        <MenuItem value="saflaştırma">Purification</MenuItem>
+        <MenuItem value="totalPrice">Total Price</MenuItem>
+        <MenuItem value="status">Status</MenuItem>
+      </Select>
+        ):(
+
+
+      <Select
+        value={searchField}
+        onChange={(e) => setSearchField(e.target.value)}
+        size="medium"
+        sx={{
+          color: "var(--primary-text-color)",
+          marginRight: 2,
+          width: 200,
+        }}
+      >
+
+        {/* Conditionally render for AdminApprovedOrders */}
+       
+        <MenuItem value="scale">Scale</MenuItem>
+        <MenuItem value="uzunluk">Length</MenuItem>
+        <MenuItem value="saflaştırma">Purification</MenuItem>
+      </Select>
         )}
+    </Box>
+
+    {(AdminPageName === "Orders" || AdminPageName === "AdminApprovingOrders") && (
+      <>
+        <div>
+          <Button
+            variant="contained"
+            onClick={handleBulkApprove}
+            className={styles["table-bulk-approve"]}
+            disabled={selectedProducts.length === 0}
+          >
+            Approve All
+          </Button>
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            className={styles["table-bulk-delete"]}
+            onClick={() => setShowBulkDeleteModal(true)}
+            disabled={selectedProducts.length === 0}
+          >
+            Delete All
+          </Button>
+        </div>
+      </>
+    )}
+  </Box>
+)}
+
       </Box>
       <Table
         sx={{
