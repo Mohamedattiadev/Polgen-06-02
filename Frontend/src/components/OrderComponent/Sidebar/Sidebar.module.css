@@ -20,6 +20,8 @@
 .sidebar.open {
   width: 220px; /* Expanded width */
   transition: width 0.2s ease-in-out, transform 0.2s ease-in-out; /* Smooth transition */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for a cleaner look */
+  backdrop-filter: blur(10px); /* Apply blur effect */
 }
 
 .sidebar.closed-mobile {

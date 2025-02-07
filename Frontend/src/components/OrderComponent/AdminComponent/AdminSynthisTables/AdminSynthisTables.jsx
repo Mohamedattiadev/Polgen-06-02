@@ -772,6 +772,7 @@ const handleBulkIsWorkingOn = async () => {
                 textAlign: "center",
                 textWrap: "nowrap",
                 paddingLeft: 4,
+
               }}
             >
               Actions
