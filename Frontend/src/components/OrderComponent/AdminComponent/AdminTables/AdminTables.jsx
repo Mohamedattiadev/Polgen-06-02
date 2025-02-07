@@ -113,12 +113,12 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const savedSelectedProducts = localStorage.getItem("selectedProducts");
-    if (savedSelectedProducts) {
-      setSelectedProducts(JSON.parse(savedSelectedProducts));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const savedSelectedProducts = localStorage.getItem("selectedProducts");
+  //   if (savedSelectedProducts) {
+  //     setSelectedProducts(JSON.parse(savedSelectedProducts));
+  //   }
+  // }, []);
   // Debugging: Log groupNumber whenever it changes
   // Update local storage whenever groupNumber changes
   useEffect(() => {
@@ -151,7 +151,7 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
         setFilteredData(updatedRows);
 
         // Increment groupNumber for the next product
-        setGroupNumber((prev) => prev + 1);
+        // setGroupNumber((prev) => prev + 1);
       }
     } catch (error) {
       console.error("Failed to add product:", error);
@@ -485,49 +485,67 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
   //----------------------
   //----------------------
   //----------------------
-  const handleBulkApprove = async () => {
-    // Get selected products that are not approved and are not finished
-    const bulkApproveIds = selectedProducts.filter((id) => {
-      const product = rows.find((row) => row.id === id);
-      return product && !product.isApproved && !product.isFinished; // Ensure it's not finished
+const handleBulkApprove = async () => {
+  console.log("Selected Products:", selectedProducts);
+  console.log("Rows Before Approval:", rows);
+
+  const bulkApproveIds = selectedProducts.filter((id) => {
+    const product = rows.find((row) => row.id === id);
+    console.log(`Checking product ${id}:`, product);
+
+    if (!product) {
+      console.warn(`Product ${id} not found.`);
+      return false;
+    }
+
+    console.log(
+      `Product ${id} - isApproved: ${product.isApproved}, isFinished: ${product.isFinished}`
+    );
+
+    const isEligible = !product.isFinished; // Allow approval even if already approved
+    console.log(`Product ${id} eligible for approval:`, isEligible);
+    return isEligible;
+  });
+
+  console.log("Bulk Approve IDs:", bulkApproveIds);
+
+  if (bulkApproveIds.length === 0) {
+    console.warn("No products to approve.");
+    return;
+  }
+
+  setProcessing((prev) => [...prev, ...bulkApproveIds]);
+  console.log("Processing products:", bulkApproveIds);
+
+  try {
+    const response = await updateProduct("all", {
+      productIds: bulkApproveIds,
+      isApproved: true,
     });
 
-    if (bulkApproveIds.length === 0) {
-      return; // Nothing to approve
-    }
+    console.log("Backend response:", response);
 
-    // Mark as processing
-    setProcessing((prev) => [...prev, ...bulkApproveIds]);
+    const updatedRows = rows.map((row) =>
+      bulkApproveIds.includes(row.id) ? { ...row, isApproved: true } : row
+    );
 
-    try {
-      // Send bulk approval request to backend
-      const response = await updateProduct("all", {
-        productIds: bulkApproveIds,
-        isApproved: true,
-      });
+    console.log("Updated Rows:", updatedRows);
+    setRows(updatedRows);
+    setFilteredData(updatedRows);
+    setSelectedProducts([]);
 
-      // Log response
-      console.log("Backend response:", response);
+  } catch (error) {
+    console.error("Error updating products:", error);
+    setError("Failed to approve selected products. Please try again.");
+  } finally {
+    setProcessing((prev) =>
+      prev.filter((id) => !bulkApproveIds.includes(id))
+    );
+    console.log("Processing state after completion:", processing);
+  }
+};
 
-      // Update UI with new approval status
-      const updatedRows = rows.map((row) =>
-        bulkApproveIds.includes(row.id) ? { ...row, isApproved: true } : row,
-      );
 
-      setRows(updatedRows);
-      setFilteredData(updatedRows);
-
-      // Clear selection
-      setSelectedProducts([]);
-    } catch (error) {
-      setError("Failed to approve selected products. Please try again.");
-    } finally {
-      // Remove from processing state
-      setProcessing((prev) =>
-        prev.filter((id) => !bulkApproveIds.includes(id)),
-      );
-    }
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -738,7 +756,7 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-between",
+              marginLeft: "auto",
               alignItems: "center",
               gap: 2,
             }}
@@ -765,77 +783,110 @@ const AdminTables = ({ filterCondition, AdminPageName }) => {
         )}
 
         {/* Conditionally render for Orders or AdminApprovingOrders */}
-        {(AdminPageName === "Orders" ||
-          AdminPageName === "AdminApprovingOrders") && (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ color: "var(--primary-text-color)" }}>
-              <TextField
-                label="Search"
-                variant="outlined"
-                size="small"
-                value={searchQuery}
-                onChange={handleSearch}
-                sx={{
-                  marginRight: 2,
-                  width: 300,
-                }}
-                InputProps={{
-                  sx: {
-                    backgroundColor: "var(--primary-bg-color)",
-                    color: "var(--primary-text-color)",
-                  },
-                }}
-                InputLabelProps={{
-                  sx: {
-                    color: "var(--primary-text-color)",
-                  },
-                }}
-              />
-              <Select
-                value={searchField}
-                onChange={(e) => setSearchField(e.target.value)}
-                size="medium"
-                sx={{
-                  color: "var(--primary-text-color)",
-                  marginRight: 2,
-                  width: 200,
-                }}
-              >
-                <MenuItem value="category">Category</MenuItem>
-                <MenuItem value="oligoAdi">Oligo Name</MenuItem>
-                <MenuItem value="userId">User ID</MenuItem>
-                <MenuItem value="scale">Scale</MenuItem>
-                <MenuItem value="fivePrime">5' Modification</MenuItem>
-                <MenuItem value="threePrime">3' Modification</MenuItem>
-                <MenuItem value="sekans">Sequence</MenuItem>
-                <MenuItem value="uzunluk">Length</MenuItem>
-                <MenuItem value="saflaştırma">Purification</MenuItem>
-                <MenuItem value="totalPrice">Total Price</MenuItem>
-                <MenuItem value="status">Status</MenuItem>
-              </Select>
-            </Box>
-            <div>
-              <Button
-                variant="contained"
-                onClick={handleBulkApprove}
-                className={styles["table-bulk-approve"]}
-                disabled={selectedProducts.length === 0}
-              >
-                Approve All
-              </Button>
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                className={styles["table-bulk-delete"]}
-                onClick={() => setShowBulkDeleteModal(true)}
-                disabled={selectedProducts.length === 0}
-              >
-                Delete All
-              </Button>
-            </div>
-          </Box>
+     {(AdminPageName === "Orders" ||
+  AdminPageName === "AdminApprovingOrders" ||
+  AdminPageName === "AdminApprovedOrders") && (
+  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+    <Box sx={{ color: "var(--primary-text-color)" }}>
+      <TextField
+        label="Search"
+        variant="outlined"
+        size="small"
+        value={searchQuery}
+        onChange={handleSearch}
+        sx={{
+          marginRight: 2,
+          width: 300,
+        }}
+        InputProps={{
+          sx: {
+            backgroundColor: "var(--primary-bg-color)",
+            color: "var(--primary-text-color)",
+          },
+        }}
+        InputLabelProps={{
+          sx: {
+            color: "var(--primary-text-color)",
+          },
+        }}
+      />
+
+        {AdminPageName !== "AdminApprovedOrders" ? ( 
+      <Select
+        value={searchField}
+        onChange={(e) => setSearchField(e.target.value)}
+        size="medium"
+        sx={{
+          color: "var(--primary-text-color)",
+          marginRight: 2,
+          width: 200,
+        }}
+      >
+
+        {/* Conditionally render for AdminApprovedOrders */}
+       
+        <MenuItem value="category">Category</MenuItem>
+        <MenuItem value="oligoAdi">Oligo Name</MenuItem>
+        <MenuItem value="userId">User ID</MenuItem>
+        <MenuItem value="scale">Scale</MenuItem>
+        <MenuItem value="fivePrime">5' Modification</MenuItem>
+        <MenuItem value="threePrime">3' Modification</MenuItem>
+        <MenuItem value="sekans">Sequence</MenuItem>
+        <MenuItem value="uzunluk">Length</MenuItem>
+        <MenuItem value="saflaştırma">Purification</MenuItem>
+        <MenuItem value="totalPrice">Total Price</MenuItem>
+        <MenuItem value="status">Status</MenuItem>
+      </Select>
+        ):(
+
+
+      <Select
+        value={searchField}
+        onChange={(e) => setSearchField(e.target.value)}
+        size="medium"
+        sx={{
+          color: "var(--primary-text-color)",
+          marginRight: 2,
+          width: 200,
+        }}
+      >
+
+        {/* Conditionally render for AdminApprovedOrders */}
+       
+        <MenuItem value="scale">Scale</MenuItem>
+        <MenuItem value="uzunluk">Length</MenuItem>
+        <MenuItem value="saflaştırma">Purification</MenuItem>
+      </Select>
         )}
+    </Box>
+
+    {(AdminPageName === "Orders" || AdminPageName === "AdminApprovingOrders") && (
+      <>
+        <div>
+          <Button
+            variant="contained"
+            onClick={handleBulkApprove}
+            className={styles["table-bulk-approve"]}
+            disabled={selectedProducts.length === 0}
+          >
+            Approve All
+          </Button>
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            className={styles["table-bulk-delete"]}
+            onClick={() => setShowBulkDeleteModal(true)}
+            disabled={selectedProducts.length === 0}
+          >
+            Delete All
+          </Button>
+        </div>
+      </>
+    )}
+  </Box>
+)}
+
       </Box>
       <Table
         sx={{

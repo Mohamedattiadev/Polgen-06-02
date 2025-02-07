@@ -235,10 +235,11 @@ const CollapsibleRow = ({
           sx={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gridTemplateRows: "1fr 1fr",
-            gap: "6px",
+            gap: "4px",
             paddingLeft: 7,
             borderRadius: "0px",
+
+                            border:"none"
           }}
         >
           {/* Show only the delete button for Control Group products */}

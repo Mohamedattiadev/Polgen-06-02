@@ -133,9 +133,9 @@ export const addProduct = async (req, res) => {
               isApproved: product.isApproved || false,
               dmt: product.dmt, // ✅ Save the assigned DMT value
             },
-            { transaction: t },
+            { transaction: t }
           );
-        }),
+        })
       );
 
       return productsToCreate;
@@ -217,6 +217,7 @@ export const updateProduct = async (req, res) => {
     scale,
     totalPrice,
     oligoAdi,
+    index,
     quantity,
     sekans,
     uzunluk,
@@ -385,7 +386,7 @@ const calculateProductValues = (sekans, modifications, a260) => {
 
   const tm = 2 * (aCount + tCount) + 4 * (gCount + cCount);
   const gcPercent = parseFloat(
-    (((gCount + cCount) / totalBases) * 100).toFixed(2),
+    (((gCount + cCount) / totalBases) * 100).toFixed(2)
   );
   const mw = parseFloat(
     (
@@ -395,24 +396,24 @@ const calculateProductValues = (sekans, modifications, a260) => {
       351 * gCount +
       330 * iCount -
       101
-    ).toFixed(2),
+    ).toFixed(2)
   );
 
   const extinctionCoefficient = parseFloat(
     (
       modArray.reduce(
         (acc, mod) => acc + (modificationCoefficients[mod] || 0),
-        0,
+        0
       ) +
       15400 * aCount +
       7400 * cCount +
       11500 * gCount +
       8700 * tCount
-    ).toFixed(2),
+    ).toFixed(2)
   );
 
   const concentration = parseFloat(
-    ((a260 * mw * 1000) / extinctionCoefficient).toFixed(2),
+    ((a260 * mw * 1000) / extinctionCoefficient).toFixed(2)
   );
   const totalNg = parseFloat((concentration * 280).toFixed(2));
   const od = parseFloat((totalNg / 33000).toFixed(2));
@@ -466,7 +467,7 @@ export const updateA260Values = async (req, res) => {
       const calculatedValues = calculateProductValues(
         product.sekans,
         product.modifications,
-        a260,
+        a260
       );
 
       await product.update({ a260, ...calculatedValues });
@@ -496,7 +497,7 @@ export const cancelSynthesis = async (req, res) => {
 
     await Product.update(
       { isWorkingOn: false, isApproved: true, GroupId: null },
-      { where: { id: products.map((p) => p.id) } },
+      { where: { id: products.map((p) => p.id) } }
     );
 
     res.json({ message: "Synthesis cancelled successfully" });

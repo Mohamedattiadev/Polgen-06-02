@@ -64,15 +64,15 @@ const AdminSynthisTables = ({ filterCondition, AdminPageName }) => {
   const [addData, setAddData] = useState([]);
   const [productToEdit, setProductToEdit] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [groupNumber, setGroupNumber] = useState(() => {
-    const savedData = JSON.parse(localStorage.getItem("groupData"));
-    const today = new Date().toDateString();
+  // const [groupNumber, setGroupNumber] = useState(() => {
+  //   const savedData = JSON.parse(localStorage.getItem("groupData"));
+  //   const today = new Date().toDateString();
 
-    if (savedData && savedData.date === today) {
-      return savedData.groupNumber;
-    }
-    return 0; // Reset if it's a new day
-  });
+  //   if (savedData && savedData.date === today) {
+  //     return savedData.groupNumber;
+  //   }
+  //   return 0; // Reset if it's a new day
+  // });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,17 +89,17 @@ const AdminSynthisTables = ({ filterCondition, AdminPageName }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const today = new Date().toDateString();
-    localStorage.setItem(
-      "groupData",
-      JSON.stringify({ groupNumber, date: today }),
-    );
-  }, [groupNumber]);
+  // useEffect(() => {
+  //   const today = new Date().toDateString();
+  //   localStorage.setItem(
+  //     "groupData",
+  //     JSON.stringify({ groupNumber, date: today }),
+  //   );
+  // }, [groupNumber]);
 
-  useEffect(() => {
-    console.log("groupNumber updated:", groupNumber);
-  }, [groupNumber]);
+  // useEffect(() => {
+  //   console.log("groupNumber updated:", groupNumber);
+  // }, [groupNumber]);
 
   const counts = useMemo(() => {
     const totalProducts = rows.length;
@@ -256,117 +256,81 @@ const AdminSynthisTables = ({ filterCondition, AdminPageName }) => {
     }
   };
 
-  const handleApproveProduct = async (id) => {
-    setProcessing((prev) => [...prev, id]);
-    try {
-      await updateProduct(id, { isApproved: true });
-      const updatedRows = rows.map((row) =>
-        row.id === id ? { ...row, isApproved: true } : row,
-      );
-      setRows(updatedRows);
-      setFilteredData(updatedRows);
-    } catch (error) {
-      setError("Failed to approve the product. Please try again.");
-    } finally {
-      setProcessing((prev) => prev.filter((pid) => pid !== id));
-    }
-  };
+  // const handleApproveProduct = async (id) => {
+  //   setProcessing((prev) => [...prev, id]);
+  //   try {
+  //     await updateProduct(id, { isApproved: true });
+  //     const updatedRows = rows.map((row) =>
+  //       row.id === id ? { ...row, isApproved: true } : row,
+  //     );
+  //     setRows(updatedRows);
+  //     setFilteredData(updatedRows);
+  //   } catch (error) {
+  //     setError("Failed to approve the product. Please try again.");
+  //   } finally {
+  //     setProcessing((prev) => prev.filter((pid) => pid !== id));
+  //   }
+  // };
 
-  const handleBulkIsWorkingOn = async () => {
-    const bulkWorkingOnIds = selectedProducts.filter(
-      (id) => !rows.find((row) => row.id === id)?.isWorkingOn,
+const handleBulkIsWorkingOn = async () => {
+  const bulkWorkingOnIds = selectedProducts.filter(
+    (id) => !rows.find((row) => row.id === id)?.isWorkingOn
+  );
+
+  if (bulkWorkingOnIds.length === 0) return;
+
+  setProcessing((prev) => [...prev, ...bulkWorkingOnIds]);
+
+  try {
+    const updatedProducts = rows.map((row) =>
+      bulkWorkingOnIds.includes(row.id) ? { ...row, isWorkingOn: true } : row
     );
 
-    if (bulkWorkingOnIds.length === 0) {
-      return;
-    }
+    await updateProduct("all", { productIds: bulkWorkingOnIds, isWorkingOn: true });
 
-    setProcessing((prev) => [...prev, ...bulkWorkingOnIds]);
+    setRows(updatedProducts);
+    setFilteredData(updatedProducts);
+    setSelectedProducts([]);
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    setProcessing((prev) => prev.filter((id) => !bulkWorkingOnIds.includes(id)));
+  }
+};
 
-    try {
-      console.log("Current groupNumber before processing:", groupNumber);
 
-      const updatedProducts = rows.map((row) => {
-        if (bulkWorkingOnIds.includes(row.id)) {
-          if (typeof row.index !== "number") {
-            console.error("Invalid row.index:", row.index);
-            return row;
-          }
+  // const handleBulkApprove = async () => {
+  //   const bulkApproveIds = selectedProducts.filter(
+  //     (id) => !rows.find((row) => row.id === id)?.isApproved,
+  //   );
 
-          const groupId = `${row.index}-${groupNumber}`;
-          console.log(`Assigning GroupId: ${groupId} to product ${row.id}`);
-          return {
-            ...row,
-            isWorkingOn: true,
-            GroupId: groupId,
-          };
-        }
-        return row;
-      });
+  //   if (bulkApproveIds.length === 0) {
+  //     return;
+  //   }
 
-      const payload = {
-        productIds: bulkWorkingOnIds,
-        isWorkingOn: true,
-        GroupId: groupNumber,
-      };
+  //   setProcessing((prev) => [...prev, ...bulkApproveIds]);
 
-      console.log("Payload sent to backend:", payload);
+  //   try {
+  //     const response = await updateProduct("all", {
+  //       productIds: bulkApproveIds,
+  //       isApproved: true,
+  //     });
 
-      const response = await updateProduct("all", payload);
+  //     const updatedRows = rows.map((row) =>
+  //       bulkApproveIds.includes(row.id) ? { ...row, isApproved: true } : row,
+  //     );
+  //     setRows(updatedRows);
+  //     setFilteredData(updatedRows);
 
-      console.log("Backend response:", response);
-
-      setRows(updatedProducts);
-      setFilteredData(updatedProducts);
-
-      setGroupNumber((prev) => {
-        const newGroupNumber = prev + 1;
-        console.log("Incremented groupNumber:", newGroupNumber);
-        return newGroupNumber;
-      });
-
-      setSelectedProducts([]);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setProcessing((prev) =>
-        prev.filter((id) => !bulkWorkingOnIds.includes(id)),
-      );
-    }
-  };
-
-  const handleBulkApprove = async () => {
-    const bulkApproveIds = selectedProducts.filter(
-      (id) => !rows.find((row) => row.id === id)?.isApproved,
-    );
-
-    if (bulkApproveIds.length === 0) {
-      return;
-    }
-
-    setProcessing((prev) => [...prev, ...bulkApproveIds]);
-
-    try {
-      const response = await updateProduct("all", {
-        productIds: bulkApproveIds,
-        isApproved: true,
-      });
-
-      const updatedRows = rows.map((row) =>
-        bulkApproveIds.includes(row.id) ? { ...row, isApproved: true } : row,
-      );
-      setRows(updatedRows);
-      setFilteredData(updatedRows);
-
-      setSelectedProducts([]);
-    } catch (error) {
-      setError("Failed to approve selected products. Please try again.");
-    } finally {
-      setProcessing((prev) =>
-        prev.filter((id) => !bulkApproveIds.includes(id)),
-      );
-    }
-  };
+  //     setSelectedProducts([]);
+  //   } catch (error) {
+  //     setError("Failed to approve selected products. Please try again.");
+  //   } finally {
+  //     setProcessing((prev) =>
+  //       prev.filter((id) => !bulkApproveIds.includes(id)),
+  //     );
+  //   }
+  // };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -374,21 +338,21 @@ const AdminSynthisTables = ({ filterCondition, AdminPageName }) => {
     setOrderBy(property);
   };
 
-  const confirmBulkDelete = async () => {
-    try {
-      await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
-      const updatedRows = rows.filter(
-        (row) => !selectedProducts.includes(row.id),
-      );
-      setRows(updatedRows);
-      setFilteredData(updatedRows);
-    } catch (error) {
-      setError("Failed to delete selected products. Please try again.");
-    } finally {
-      setSelectedProducts([]);
-      setShowBulkDeleteModal(false);
-    }
-  };
+  // const confirmBulkDelete = async () => {
+  //   try {
+  //     await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
+  //     const updatedRows = rows.filter(
+  //       (row) => !selectedProducts.includes(row.id),
+  //     );
+  //     setRows(updatedRows);
+  //     setFilteredData(updatedRows);
+  //   } catch (error) {
+  //     setError("Failed to delete selected products. Please try again.");
+  //   } finally {
+  //     setSelectedProducts([]);
+  //     setShowBulkDeleteModal(false);
+  //   }
+  // };
 
   const handleNextStatus = async (id, currentStatus) => {
     setProcessing((prev) => [...prev, id]);
@@ -808,6 +772,7 @@ const AdminSynthisTables = ({ filterCondition, AdminPageName }) => {
                 textAlign: "center",
                 textWrap: "nowrap",
                 paddingLeft: 4,
+
               }}
             >
               Actions

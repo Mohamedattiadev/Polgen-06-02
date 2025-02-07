@@ -85,7 +85,7 @@ export const getUserProfile = async (navigate) => {
 
     if (!userData || !userData.token) {
       console.error(
-        `Authentication token is missing for session: ${sessionId}`,
+        `Authentication token is missing for session: ${sessionId}`
       );
       throw new Error("Authentication token is missing");
     }
@@ -150,7 +150,7 @@ export const forgotPassword = async (email) => {
   } catch (error) {
     console.error(
       "Forgot Password Error:",
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
     throw error;
   }
@@ -164,7 +164,7 @@ export const resetPassword = async (data) => {
   } catch (error) {
     console.error(
       "Reset Password Error:",
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
     throw error;
   }
@@ -196,7 +196,7 @@ export const updateUserProfile = async (updatedData) => {
 
     if (!userData || !userData.token) {
       console.error(
-        `Authentication token is missing for session: ${sessionId}`,
+        `Authentication token is missing for session: ${sessionId}`
       );
       throw new Error("Authentication token is missing");
     }
@@ -220,7 +220,7 @@ export const updateUserProfile = async (updatedData) => {
       JSON.stringify({
         ...userData,
         profile: updatedProfile,
-      }),
+      })
     );
 
     return updatedProfile; // Return updated profile
@@ -247,7 +247,7 @@ export const getUserById = async (userId) => {
         headers: {
           Authorization: `Bearer ${userData.token}`, // Pass the token in the header
         },
-      },
+      }
     );
 
     const text = await response.text(); // Get raw text response for debugging

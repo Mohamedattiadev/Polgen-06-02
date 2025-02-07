@@ -27,6 +27,7 @@ export const addProduct = async (productData) => {
   try {
     const payload = {
       products: productData.map((product) => ({
+        index: product.index || 0,
         category: product.category || "defaultcategory", // Ensure a valid category
         modifications: {
           fivePrime: product.modifications?.fivePrime || "", // Properly serialize
@@ -60,7 +61,7 @@ export const addProduct = async (productData) => {
   } catch (error) {
     console.error(
       "Error adding product:",
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
     throw error; // Let the calling component handle it
   }
@@ -87,7 +88,7 @@ export const getProducts = async (userRole, userId, isSpecificUser = false) => {
   } catch (error) {
     console.error(
       "Error fetching products:",
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
     throw error;
   }
@@ -101,7 +102,7 @@ export const getProductById = async (id) => {
   } catch (error) {
     console.error(
       `Error fetching product with ID ${id}:`,
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
     throw error; // Rethrow error for handling in the calling component
   }
@@ -119,7 +120,7 @@ export const updateProduct = async (id, updatedData) => {
   } catch (error) {
     console.error(
       `Error updating product with ID ${id}:`,
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
     throw error;
   }
@@ -133,7 +134,7 @@ export const deleteProduct = async (id) => {
   } catch (error) {
     console.error(
       `Error deleting product with ID ${id}:`,
-      error.response?.data || error.message,
+      error.response?.data || error.message
     );
     throw error; // Rethrow error for handling in the calling component
   }

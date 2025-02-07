@@ -1,4 +1,5 @@
 import React from "react";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate, useParams, useLocation } from "react-router-dom"; // Added useLocation
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -10,6 +11,7 @@ import GradingIcon from "@mui/icons-material/Grading";
 import ScienceIcon from "@mui/icons-material/Science";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import styles from "./Sidebar.module.css";
+import AdminFinishedOrders from "../../../pages/Order/Admin/AdminFinishedOrders/AdminFinishedOrders";
 
 const Sidebar = ({ userType, isSidebarOpen, toggleSidebar, onSignOut }) => {
   const navigate = useNavigate();
@@ -42,23 +44,17 @@ const Sidebar = ({ userType, isSidebarOpen, toggleSidebar, onSignOut }) => {
   ];
 
   const ADMIN_NAV_ITEMS = [
-    // {
-    //   title: "Dashboard",
-    //   icon: <DashboardIcon />,
-    //   path: `/admin/${username}/dashboard`,
-    // },
-    //
-    //
+  {
+      title: "All Orders",
+      icon: <ShoppingCartIcon />,
+      path: `/admin/${username}/orders`,
+    },
     {
       title: "approving Orders",
       icon: <SummarizeIcon />,
       path: `/admin/${username}/approvingOrders`,
     },
-    {
-      title: "All Orders",
-      icon: <ShoppingCartIcon />,
-      path: `/admin/${username}/orders`,
-    },
+  
     {
       title: "Approved Orders",
       icon: <GradingIcon />,
@@ -73,6 +69,12 @@ const Sidebar = ({ userType, isSidebarOpen, toggleSidebar, onSignOut }) => {
       title: "Approve Mails",
       icon: <MarkEmailReadIcon />,
       path: `/admin/${username}/approveMails`,
+    },
+
+    {
+      title: "finished Orders",
+      icon: <CheckCircleIcon />,
+      path: `/admin/${username}/finishedOrders`,  
     },
   ];
 
