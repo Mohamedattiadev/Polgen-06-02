@@ -9,6 +9,7 @@ import {
   importExcelFile,
 } from "../../../../api/excel.js";
 
+import axios from "axios"; // Add this line
 const AddProduct = () => {
   const navigate = useNavigate();
   const { username: urlUsername } = useParams();
@@ -155,55 +156,91 @@ const AddProduct = () => {
     }
   };
 
-  const handleDownloadPrimer = async () => {
-    try {
-      const response = await fetch("/api/excel/");
-      if (!response.ok) throw new Error("Error downloading Primer template");
+// ✅ Function to download **Primer** Template
+const handleDownloadPrimer = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/api/excel/primer-template", {
+      method: "GET",
+    });
 
-      const contentDisposition = response.headers.get("Content-Disposition");
-      const fileName = contentDisposition
-        ? contentDisposition.split("filename=")[1].replace(/"/g, "")
-        : "Primer_Template.xlsx";
+    if (!response.ok) throw new Error("Failed to fetch Primer template");
 
-      const blob = await response.blob();
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = fileName;
-      link.click();
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "Primer_Template.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 
-      toast.success(`${fileName} downloaded successfully!`);
-    } catch (error) {
-      toast.error("Error downloading Primer template.");
-      console.error("Error:", error);
-    }
-  };
+    toast.success("Primer template downloaded successfully!");
+  } catch (error) {
+    console.error("❌ Error downloading Primer template:", error);
+    toast.error("Failed to download Primer template.");
+  }
+};
 
-  const handleDownloadProbe = async () => {
-    try {
-      const response = await fetch("/api/excel/");
-      if (!response.ok) throw new Error("Error downloading Probe template");
+// ✅ Function to download **Probe** Template
+const handleDownloadProbe = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/api/excel/probe-template", {
+      method: "GET",
+    });
 
-      const contentDisposition = response.headers.get("Content-Disposition");
-      const fileName = contentDisposition
-        ? contentDisposition.split("filename=")[1].replace(/"/g, "")
-        : "Probe_Template.xlsx";
+    if (!response.ok) throw new Error("Failed to fetch Probe template");
 
-      const blob = await response.blob();
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = fileName;
-      link.click();
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "Probe_Template.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 
-      toast.success(`${fileName} downloaded successfully!`);
-    } catch (error) {
-      toast.error("Error downloading Probe template.");
-      console.error("Error:", error);
-    }
-  };
+    toast.success("Probe template downloaded successfully!");
+  } catch (error) {
+    console.error("❌ Error downloading Probe template:", error);
+    toast.error("Failed to download Probe template.");
+  }
+};
 
+ // ✅ Function to download **Primer** Template
+const handleDownloadPrimerTemplate = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/api/excel/primer-template", {
+      method: "GET",
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch Primer template");
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "Primer_Template.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    toast.success("Primer template downloaded successfully!");
+  } catch (error) {
+    console.error("❌ Error downloading Primer template:", error);
+    toast.error("Failed to download Primer template.");
+  }
+};
+
+
+
+// ✅ Add buttons in UI
+
+  
+  
   return (
     <div className={styles.container}>
       <h2 className={styles.header}>Add Product</h2>
+      
 
       {/* Mode Selection Buttons */}
       <div className={styles.modeSelection}>
