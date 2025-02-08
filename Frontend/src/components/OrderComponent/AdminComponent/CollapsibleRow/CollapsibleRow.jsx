@@ -592,11 +592,13 @@ const handleFinishGroup = async () => {
                                   <CheckCircleIcon color="disabled" />
                                 )}
                               </IconButton>
+                              {AdminPageName === "AdminFinishedOrders"?(null):(
                               <IconButton
                                 onClick={() => handleEditProduct(groupedRow)}
                               >
                                 <EditIcon />
                               </IconButton>
+                              )}
                               <IconButton
                                 onClick={() => {
                                   setProductToDelete(groupedRow.id);
