@@ -1,4 +1,6 @@
 import React from "react";
+
+import PersonIcon from '@mui/icons-material/Person';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate, useParams, useLocation } from "react-router-dom"; // Added useLocation
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -51,7 +53,7 @@ const Sidebar = ({ userType, isSidebarOpen, toggleSidebar, onSignOut }) => {
     },
     {
       title: "Musteri Orders",
-      icon: <SummarizeIcon />,
+      icon: <PersonIcon />,
       path: `/admin/${username}/musteriOrders`,
     },
     {

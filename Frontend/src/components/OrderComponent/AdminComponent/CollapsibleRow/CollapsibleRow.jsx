@@ -153,7 +153,11 @@ const handleFinishGroup = async () => {
             paddingLeft: 5,
           }}
         >
-          {row.index}
+     {AdminPageName==="AdminMusteriOrders"?
+                        
+                          (row.orderno):(row.index)}
+
+
         </TableCell>
         {AdminPageName === "AdminSynthingOrders" && (
           <TableCell
@@ -281,7 +285,7 @@ const handleFinishGroup = async () => {
                     isFinished: row.isFinished,
                   })
                 }
-                disabled={processing.includes(row.id)}
+               disabled={processing.includes(row.id) || row.isFinished} 
               >
                 {processing.includes(row.id) ? (
                   <HourglassBottomIcon />
@@ -295,9 +299,15 @@ const handleFinishGroup = async () => {
                   <CheckCircleIcon color="disabled" />
                 )}
               </IconButton>
+
+
+    {!row.isFinished && (
               <IconButton onClick={() => handleEditProduct(row)}>
                 <EditIcon />
               </IconButton>
+    )}
+
+
               <IconButton
                 onClick={() => {
                   setProductToDelete(row.id);
@@ -330,7 +340,7 @@ const handleFinishGroup = async () => {
                   <Typography variant="h6" gutterBottom>
                     Group ID: {row.GroupId}
                   </Typography>
-{AdminPageName === "AdminFinishedOrders" ? (null):(
+{AdminPageName === "AdminFinishedOrders"||AdminPageName === "AdminMusteriOrders" ? (null):(
   <Button
     variant="contained"
     onClick={handleFinishGroup}
@@ -368,7 +378,9 @@ const handleFinishGroup = async () => {
                           paddingLeft: 5,
                         }}
                       >
-                        #
+                        {AdminPageName==="AdminMusteriOrders"?
+                        
+                      ("OrderNO"):("#")}
                       </TableCell>
                       <TableCell
                         sx={{
@@ -459,7 +471,10 @@ const handleFinishGroup = async () => {
                             paddingLeft: 5,
                           }}
                         >
-                          {groupedRow.index}
+    {AdminPageName==="AdminMusteriOrders"?
+                        
+                          (groupedRow.orderno):(groupedRow.index)}
+
                         </TableCell>
                         <TableCell
                           sx={{
@@ -578,7 +593,7 @@ const handleFinishGroup = async () => {
                                     isFinished: groupedRow.isFinished,
                                   })
                                 }
-                                disabled={processing.includes(groupedRow.id)}
+                           disabled={processing.includes(row.id) || row.isFinished} 
                               >
                                 {processing.includes(groupedRow.id) ? (
                                   <HourglassBottomIcon />
@@ -592,7 +607,9 @@ const handleFinishGroup = async () => {
                                   <CheckCircleIcon color="disabled" />
                                 )}
                               </IconButton>
-                              {AdminPageName === "AdminFinishedOrders"?(null):(
+                           
+    {!row.isFinished && (
+
                               <IconButton
                                 onClick={() => handleEditProduct(groupedRow)}
                               >

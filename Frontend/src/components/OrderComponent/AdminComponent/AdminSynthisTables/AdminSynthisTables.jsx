@@ -666,7 +666,9 @@ const handleBulkIsWorkingOn = async () => {
                 direction={orderBy === "index" ? order : "asc"}
                 onClick={(event) => handleRequestSort(event, "index")}
               />
-              #
+   {AdminPageName==="AdminMusteriOrders"?
+                        
+                      ("OrderNO"):("#")}
             </TableCell>
 
             {AdminPageName === "AdminSynthingOrders" ? (

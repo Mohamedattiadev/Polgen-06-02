@@ -191,20 +191,7 @@ const UserTables = ({ userRole, userId }) => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell
-              sx={{
-                color: "var(--primary-text-color)",
-                textAlign: "center", // Center align the data
-                textWrap: "nowrap",
-              }}
-            >
-              <TableSortLabel
-                active={orderBy === "index"} // or any other field you want to sort by
-                direction={orderBy === "index" ? order : "asc"}
-                onClick={(event) => handleRequestSort(event, "index")} // change property to the actual one
-              />
-              #
-            </TableCell>
+        
             <TableCell
               sx={{
                 color: "var(--primary-text-color)",
@@ -361,16 +348,7 @@ const UserTables = ({ userRole, userId }) => {
               }}
               key={row.id}
             >
-              <TableCell
-                sx={{
-                  color: "var(--primary-text-color)",
-                  textAlign: "center", // Center align the data
-                  paddingLeft: 5,
-                }}
-              >
-                {row.index}
-                {/* Calculate the row number */}
-              </TableCell>
+          
               <TableCell
                 sx={{
                   color: "var(--primary-text-color)",
