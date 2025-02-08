@@ -383,12 +383,14 @@ const AdminDuringProcessTables = ({
   const handleDownloadCSV = async () => {
     try {
       const products = filteredRows.map((product) => ({
+        category: product.category, 
+        modifications: product.modifications,
         sekans: product.sekans,
         dmt: product.dmt || "DMTOFF",
-        productId: product.index || "N/A",
-        oligoname: product.oligoAdi || "Unnamed",
-        isFiveModified: product.hasFiveModification,  // ✅ Ensure this is included
-        category: product.type, // ✅ Ensure probes are marked as "probe"
+        index: product.index || "N/A",
+        oligoAdi: product.oligoAdi || "Unnamed",
+        userId: product.userId,
+        GroupId: product.GroupId || "N/A",  
       }));
   
       console.log("📤 Sending products for CSV export:", products);

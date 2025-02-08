@@ -16,6 +16,7 @@ import { sequelize } from "../models/index.js"; // Correct Sequelize instance im
 
 
 import { Parser } from "json2csv";
+
 // ✅ Get today's date in YYMMDD format
 function getFormattedDate() {
   return new Date().toISOString().slice(2, 10).replace(/-/g, ""); // Convert to "YYMMDD"
@@ -28,14 +29,11 @@ export const exportProductsCsv = async (req, res) => {
       return res.status(400).json({ error: "No products provided." });
     }
 
-    // ✅ Extract unique product indexes
-    const productIndexes = [...new Set(products.map((p) => p.productId))];
+    // ✅ Only fetch products **sent from the frontend**
+    const productIndexes = products.map((p) => p.GroupId );
 
-    // ✅ Fetch only requested products from DB
-    const dbProducts = await Product.findAll({
-      where: { index: productIndexes },
-      attributes: ["category", "modifications", "sekans", "dmt", "index", "oligoAdi", "userId", "GroupId"],
-    });
+    // ✅ Fetch only **selected products** from the database
+    const dbProducts = products;
 
     // ✅ Fetch users
     const userIds = [...new Set(dbProducts.map((p) => p.userId))];
@@ -44,41 +42,26 @@ export const exportProductsCsv = async (req, res) => {
       attributes: ["id", "username"],
     });
 
-    // ✅ Create a user mapping (userId -> username)
     const userMap = Object.fromEntries(users.map((user) => [user.id, user.username]));
 
-    // ✅ Store **ALL** products (NO DUPLICATES REMOVED)
+    // ✅ Generate CSV data
     const csvData = dbProducts.map((product) => {
-      const isProbe = product.category?.toLowerCase().includes("probe");
-      const hasFivePrimeModification =
-        Array.isArray(product.modifications) &&
-        product.modifications.some((mod) => mod.includes("5'"));
+      const isFiveModified = product.modifications?.fivePrime?.trim(); // Check if fivePrime has value
+      const formattedSekans = isFiveModified ? `5${product.sekans}` : product.sekans;
 
-      // ✅ Add "5" only if necessary
-      let formattedSekans = product.sekans;
-      if (isProbe || hasFivePrimeModification) {
-        formattedSekans = `5${product.sekans}`;
-      }
-
-      // ✅ Generate SentezNo (YYMMDD-GroupId-Index)
       const sentezNo = `${getFormattedDate()}-${product.GroupId || "N/A"}-${product.index || "N/A"}`;
 
-      return {
-        sekans: formattedSekans,
-        dmt: product.dmt || "DMTOFF",
+      return [
+        formattedSekans,
+        product.dmt || "DMTOFF",
         sentezNo,
-        oligoname: product.oligoAdi || "Unnamed",
-        username: userMap[product.userId] || "Unknown",
-      };
+        product.oligoAdi || "Unnamed",
+        userMap[product.userId] || "Unknown",
+      ].join(","); // ✅ No quotes, just separated by commas
     });
 
-    // ✅ Convert to CSV
-    const parser = new Parser({
-      fields: ["sekans", "dmt", "sentezNo", "oligoname", "username"],
-      header: false, // ✅ Removes the first line (header row)
-    });
-
-    const csv = parser.parse(csvData);
+    // ✅ Join rows into CSV format
+    const csv = csvData.join("\n");
 
     res.header("Content-Type", "text/csv");
     res.attachment("filtered_products.csv");
@@ -88,6 +71,11 @@ export const exportProductsCsv = async (req, res) => {
     res.status(500).json({ error: "Failed to export CSV." });
   }
 };
+
+
+
+
+
 
 
 
