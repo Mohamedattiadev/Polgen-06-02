@@ -1,19 +1,19 @@
 
 import React, { useState } from "react";
 import AdminTables from "../../../../components/OrderComponent/AdminComponent/AdminTables/AdminTables";
+import styles from "./AdminMusteriOrders.module.css";
 import AdminSynthisTables from "../../../../components/OrderComponent/AdminComponent/AdminSynthisTables/AdminSynthisTables";
-import styles from "./AdminFinishedOrders.module.css"; 
 
-const AdminFinishedOrders = () => {
+const AdminMusteriOrders = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   // Define filter condition for synthing orders
   const filterCondition = (row) => {
-    const isFinishedOnly = row.isFinished  && !row.isWorkingOn// Only "working on" and not finished
+    const isAll = row.isWorkingOn || row.isFinished || row.isApproved||row.isOrder; // Only "working on" and not finished
     const matchesCategory =
       categoryFilter === "all" ||
       row.category?.toLowerCase() === categoryFilter.toLowerCase();
-    return isFinishedOnly && matchesCategory;
+    return isAll && matchesCategory;
   };
 
   return (
@@ -50,7 +50,7 @@ const AdminFinishedOrders = () => {
       <div className={styles.tableContainer}>
         <AdminSynthisTables
           filterCondition={filterCondition}
-          AdminPageName="AdminFinishedOrders"
+          AdminPageName="AdminMusteriOrders"
           nosearch=""
         />
       </div>
@@ -58,4 +58,4 @@ const AdminFinishedOrders = () => {
   );
 };
 
-export default AdminFinishedOrders;
+export default AdminMusteriOrders;

@@ -330,24 +330,25 @@ const handleFinishGroup = async () => {
                   <Typography variant="h6" gutterBottom>
                     Group ID: {row.GroupId}
                   </Typography>
-                  <Button
-                    variant="contained"
-                    onClick={handleFinishGroup}
-                    disabled={
-                      !isAnyRowSelected ||
-                      processing.some((id) =>
-                        groupedRows.map((r) => r.id).includes(id),
-                      )
-                    }
-                    sx={{
-                      marginBottom: 2,
-                      width: "20%",
-                      backgroundColor: "var(--error-color)",
-                    }}
-                    className={styles.finishAllButton}
-                  >
-                    Finish All
-                  </Button>
+{AdminPageName === "AdminFinishedOrders" ? (null):(
+  <Button
+    variant="contained"
+    onClick={handleFinishGroup}
+    disabled={
+      !isAnyRowSelected ||
+      processing.some((id) => groupedRows.some((r) => r.id === id))
+    }
+    sx={{
+      marginBottom: 2,
+      width: "20%",
+      backgroundColor: "var(--error-color)",
+    }}
+    className={styles.finishAllButton}
+  >
+    Finish All
+  </Button>
+)}
+
                 </Box>
                 <Table size="small">
                   <TableHead>

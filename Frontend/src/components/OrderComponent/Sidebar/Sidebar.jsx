@@ -50,6 +50,11 @@ const Sidebar = ({ userType, isSidebarOpen, toggleSidebar, onSignOut }) => {
       path: `/admin/${username}/orders`,
     },
     {
+      title: "Musteri Orders",
+      icon: <SummarizeIcon />,
+      path: `/admin/${username}/musteriOrders`,
+    },
+    {
       title: "approving Orders",
       icon: <SummarizeIcon />,
       path: `/admin/${username}/approvingOrders`,
