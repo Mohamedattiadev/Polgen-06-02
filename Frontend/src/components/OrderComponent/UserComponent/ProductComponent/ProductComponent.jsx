@@ -11,6 +11,17 @@ const ProductComponent = ({
 }) => {
   const [data, setData] = useState({ ...productData });
 
+  console.log(data)
+
+  useEffect(() => {
+  if (!data.scale) {
+    setData((prev) => ({
+      ...prev,
+      scale: category === "prime" ? "50 nmol" : "200 nmol",
+    }));
+  }
+}, [category]); // Runs when category changes
+
   //
   //--------------------------
   // const [dataOfSekans, SetdataOfSekans] = useState({ sekans: "" });
@@ -178,25 +189,34 @@ const ProductComponent = ({
               </select>
             </div>
           )}
+<div className={styles.formGroup}>
+  <label>Synthesis Scale:</label>
+  <select
+    value={data.scale || ""} // Ensures it does not default to 50 nmol
+    onChange={(e) => {
+      const newScale = e.target.value;
+      console.log("Selected scale:", newScale); // Debugging
+      setData((prev) => ({
+        ...prev,
+        scale: newScale, // Ensures the selected value updates
+      }));
+    }}
+  >
+    {(category === "prime"
+      ? ["50 nmol", "100 nmol", "200 nmol"] // Prime allows all
+      : ["200 nmol"] // Prop allows only 200 nmol
+    ).map((scale) => (
+      <option key={scale} value={scale}>
+        {scale}
+      </option>
+    ))}
+  </select>
+</div>
 
-          <div className={styles.formGroup}>
-            <label>Synthesis Scale:</label>
-            <select
-              value={data.scale}
-              onChange={(e) =>
-                setData((prev) => ({
-                  ...prev,
-                  scale: e.target.value,
-                }))
-              }
-            >
-              {["50 nmol", "100 nmol", "200 nmol"].map((scale) => (
-                <option key={scale} value={scale}>
-                  {scale}
-                </option>
-              ))}
-            </select>
-          </div>
+
+
+
+
         </div>
         <div className={styles.formGroupDown}>
           <div className={styles.formGroup}>

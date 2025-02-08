@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import { useNavigate, useParams, useOutletContext } from "react-router-dom";
 import ProductComponent from "../../../../components/OrderComponent/UserComponent/ProductComponent/ProductComponent";
 import styles from "./AddProduct.module.css";
@@ -37,7 +38,9 @@ const AddProduct = () => {
         threePrime: "",
       },
       saflaştırma: category === "prime" ? "DSLT" : null,
-      scale: "50 nmol",
+    scale: category === "prime"
+      ? (products.length > 0 ? products[products.length - 1].scale : "50 nmol") // Keeps last selected scale
+      : "200 nmol", // Prop always 200 nmol
       totalPrice: 0, // Default to 0 to avoid undefined
       oligoAdi: "",
       selected: true,

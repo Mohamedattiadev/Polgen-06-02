@@ -809,8 +809,8 @@ const handleBulkApprove = async () => {
             color: "var(--primary-text-color)",
           },
         }}
-      />
 
+      />
         {AdminPageName !== "AdminApprovedOrders" ? ( 
       <Select
         value={searchField}
