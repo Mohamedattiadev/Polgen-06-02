@@ -340,7 +340,7 @@ const handleFinishGroup = async () => {
                   <Typography variant="h6" gutterBottom>
                     Group ID: {row.GroupId}
                   </Typography>
-{AdminPageName === "AdminFinishedOrders" ? (null):(
+{AdminPageName === "AdminFinishedOrders"||AdminPageName === "AdminMusteriOrders" ? (null):(
   <Button
     variant="contained"
     onClick={handleFinishGroup}
