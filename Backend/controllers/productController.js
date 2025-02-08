@@ -110,56 +110,53 @@ export const addProduct = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    console.log("🔥 User Before Update:", user.toJSON());
+    // ✅ Ensure orderno exists; Default to "0000" if missing
+    const currentOrderNo = user.orderno || "0000";
+    const newOrderNo = (parseInt(currentOrderNo, 10) + 1).toString().padStart(4, "0");
 
-    // ✅ Increase user's orderno by 1
-    const newOrderNo = (parseInt(user.orderno, 10) + 1).toString().padStart(4, "0");
+    // ✅ Update user's orderno
     await user.update({ orderno: newOrderNo });
-
-    console.log("✅ User After Update:", await user.reload());
 
     // ✅ Begin transaction for atomic operations
     const createdProducts = await sequelize.transaction(async (t) => {
       return Promise.all(
         products.map(async (product) => {
-          const createdProduct = await Product.create(
+          return await Product.create(
             {
-              ...product,
+              index: product.index, 
+              category: product.category,
+              GroupId: product.GroupId,
+              modifications: product.modifications,
+              saflaştırma: product.saflaştırma,
+              scale: product.scale,
+              totalPrice: product.totalPrice,
+              oligoAdi: product.oligoAdi,
               userId,
-              orderno: newOrderNo, // ✅ Assign orderno to each product
+              sekans: product.sekans,
+              uzunluk: product.uzunluk,
+              quantity: product.quantity || 1,
+              isOrder: true,
+              isFromControlGroup: product.isFromControlGroup || false,
+              isApproved: product.isApproved || false,
+              dmt: product.dmt,
+              orderno: newOrderNo, // ✅ Assign the same orderno to all products
             },
             { transaction: t }
           );
-          return createdProduct;
         })
       );
     });
-
-    console.log("📦 All Created Products:", JSON.stringify(createdProducts, null, 2));
-
-    // ✅ Log ALL PRODUCTS in database
-    const allProducts = await Product.findAll();
-    console.log("📦 ALL PRODUCTS IN DATABASE:", JSON.stringify(allProducts, null, 2));
 
     res.status(201).json({
       message: "Products added successfully.",
       products: createdProducts,
     });
-    // Send Confirmation Email
-    const mailOptions = {
-      from: `"Polgen Order Confirmation" <${process.env.SMTP_USER}>`,
-      to: user.email,
-      subject: "Order Confirmation",
-      html: submissionConfirmationTemplate(user.username, createdProducts),
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`📧 Order confirmation email sent to ${user.email}`);
   } catch (error) {
-    console.error("❌ Error adding product:", error);
+    console.error("Error adding product:", error);
     res.status(500).json({ error: "Failed to add product." });
   }
 };
+
 
 
 
