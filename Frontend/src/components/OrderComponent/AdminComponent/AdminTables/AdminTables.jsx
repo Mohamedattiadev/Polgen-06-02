@@ -1196,9 +1196,14 @@ const handleBulkApprove = async () => {
                         <CheckCircleIcon color="disabled" />
                       )}
                     </IconButton>
-                    <IconButton onClick={() => handleEditProduct(row)}>
-                      <EditIcon />
-                    </IconButton>
+
+    {/* Edit Button (Only show if not finished) */}
+    {!row.isFinished && (
+      <IconButton onClick={() => handleEditProduct(row)}>
+        <EditIcon />
+      </IconButton>
+    )}
+
                     <IconButton
                       onClick={() => {
                         setProductToDelete(row.id);
