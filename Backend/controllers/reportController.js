@@ -48,7 +48,7 @@ export const generateExcelReport = async (req, res) => {
       const username = user ? user.username : "Unknown";
 
       const row = mainSheet.getRow(index + 2);
-      row.getCell("A").value = username+day+"-"+product.GroupId+"-"+product.index; // Sipariş No
+      row.getCell("A").value = username+product.orderno; // Sipariş No
       row.getCell("B").value = product.sekans; // Baz Dizisi 5'-3'
       row.getCell("C").value = product.dmt; // DMT ON/OFF
       row.getCell("D").value = day+"-"+product.GroupId+"-"+product.index; // SentezNo
@@ -68,8 +68,6 @@ export const generateExcelReport = async (req, res) => {
       row.getCell("R").value = product.od; // OD
       row.getCell("S").value = product.totalNmol; // Total nmol
       row.getCell("T").value = product.stok100M; // 100 µM stok - µl TE
-      row.getCell("U").value = product.stok50M; // 50 µM stok - µl TE
-      row.getCell("V").value = username; // Username
       row.commit();
     }
 
@@ -121,7 +119,7 @@ export const generateExcelReport = async (req, res) => {
       for (let i = 0; i < userProducts.length; i++) {
         const product = userProducts[i];
         const row = userSheet.getRow(i + 2);
-        row.getCell("A").value = username+day+"-"+product.GroupId+"-"+product.index; // Sipariş No
+        row.getCell("A").value = username+product.orderno; // Sipariş No
         row.getCell("B").value = product.sekans; // Baz Dizisi 5'-3'
         row.getCell("C").value = product.dmt; // DMT ON/OFF
         row.getCell("D").value = day+"-"+product.GroupId+"-"+product.index; // SentezNo
@@ -141,8 +139,7 @@ export const generateExcelReport = async (req, res) => {
         row.getCell("R").value = product.od; // OD
         row.getCell("S").value = product.totalNmol; // Total nmol
         row.getCell("T").value = product.stok100M; // 100 µM stok - µl TE
-        row.getCell("U").value = product.stok50M; // 50 µM stok - µl TE
-        row.commit();
+       row.commit();
       }
     }
 
@@ -162,7 +159,6 @@ export const generateExcelReport = async (req, res) => {
     res.status(500).json({ error: "Failed to generate Excel report" });
   }
 };
-
 
 
 

@@ -30,7 +30,7 @@ export const exportProductsCsv = async (req, res) => {
     }
 
     // ✅ Only fetch products **sent from the frontend**
-    const productIndexes = products.map((p) => p.GroupId );
+   // const productIndexes = products.map((p) => p.GroupId );
 
     // ✅ Fetch only **selected products** from the database
     const dbProducts = products;
