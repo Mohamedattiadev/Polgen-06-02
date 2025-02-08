@@ -1167,9 +1167,9 @@ const handleBulkApprove = async () => {
                     >
                       <DeleteIcon color="error" />
                     </IconButton>
-                    <IconButton onClick={() => handleEditProduct(row)}>
+                    {/* <IconButton onClick={() => handleEditProduct(row)}>
                       <EditIcon />
-                    </IconButton>
+                    </IconButton> */}
                   </>
                 ) : (
                   <>
