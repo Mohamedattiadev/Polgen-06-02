@@ -110,46 +110,48 @@ export const addProduct = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
+    console.log("🔥 User Before Update:", user.toJSON());
+
+    // ✅ Increase user's orderno by 1
+    const newOrderNo = (parseInt(user.orderno, 10) + 1).toString().padStart(4, "0");
+    await user.update({ orderno: newOrderNo });
+
+    console.log("✅ User After Update:", await user.reload());
+
     // ✅ Begin transaction for atomic operations
     const createdProducts = await sequelize.transaction(async (t) => {
-      const productsToCreate = await Promise.all(
+      return Promise.all(
         products.map(async (product) => {
-          return await Product.create(
+          const createdProduct = await Product.create(
             {
-              index: product.index, // ✅ Save the assigned index
-              category: product.category,
-              GroupId: product.GroupId,
-              modifications: product.modifications,
-              saflaştırma: product.saflaştırma,
-              scale: product.scale,
-              totalPrice: product.totalPrice,
-              oligoAdi: product.oligoAdi,
+              ...product,
               userId,
-              sekans: product.sekans,
-              uzunluk: product.uzunluk,
-              quantity: product.quantity || 1,
-              isOrder: true,
-              isFromControlGroup: product.isFromControlGroup || false,
-              isApproved: product.isApproved || false,
-              dmt: product.dmt, // ✅ Save the assigned DMT value
+              orderno: newOrderNo, // ✅ Assign orderno to each product
             },
             { transaction: t }
           );
+          return createdProduct;
         })
       );
-
-      return productsToCreate;
     });
+
+    console.log("📦 All Created Products:", JSON.stringify(createdProducts, null, 2));
+
+    // ✅ Log ALL PRODUCTS in database
+    const allProducts = await Product.findAll();
+    console.log("📦 ALL PRODUCTS IN DATABASE:", JSON.stringify(allProducts, null, 2));
 
     res.status(201).json({
       message: "Products added successfully.",
       products: createdProducts,
     });
   } catch (error) {
-    console.error("Error adding product:", error);
+    console.error("❌ Error adding product:", error);
     res.status(500).json({ error: "Failed to add product." });
   }
 };
+
+
 
 //
 //

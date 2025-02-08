@@ -89,6 +89,12 @@ const Product = sequelize.define(
     stok50M: { type: DataTypes.FLOAT, allowNull: true },
     totalNg: { type: DataTypes.FLOAT, allowNull: true }, // Total ng
     totalNmol: { type: DataTypes.FLOAT, allowNull: true }, // Total nmol
+    orderno: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "0000", // ✅ Default order number
+    },
+    
   },
 
   {

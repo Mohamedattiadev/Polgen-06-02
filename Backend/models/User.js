@@ -57,6 +57,12 @@ const User = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false, // Defaults to false, becomes true when the process is finished
     },
+    orderno: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "0000",
+    },
+    
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
