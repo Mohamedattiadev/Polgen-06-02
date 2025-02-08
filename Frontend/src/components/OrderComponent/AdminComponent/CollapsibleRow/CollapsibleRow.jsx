@@ -153,7 +153,11 @@ const handleFinishGroup = async () => {
             paddingLeft: 5,
           }}
         >
-          {row.index}
+     {AdminPageName==="AdminMusteriOrders"?
+                        
+                          (row.orderno):(row.index)}
+
+
         </TableCell>
         {AdminPageName === "AdminSynthingOrders" && (
           <TableCell
@@ -374,7 +378,9 @@ const handleFinishGroup = async () => {
                           paddingLeft: 5,
                         }}
                       >
-                        #
+                        {AdminPageName==="AdminMusteriOrders"?
+                        
+                      ("OrderNO"):("#")}
                       </TableCell>
                       <TableCell
                         sx={{
@@ -465,7 +471,10 @@ const handleFinishGroup = async () => {
                             paddingLeft: 5,
                           }}
                         >
-                          {groupedRow.index}
+    {AdminPageName==="AdminMusteriOrders"?
+                        
+                          (groupedRow.orderno):(groupedRow.index)}
+
                         </TableCell>
                         <TableCell
                           sx={{
