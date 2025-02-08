@@ -281,7 +281,7 @@ const handleFinishGroup = async () => {
                     isFinished: row.isFinished,
                   })
                 }
-                disabled={processing.includes(row.id)}
+               disabled={processing.includes(row.id) || row.isFinished} 
               >
                 {processing.includes(row.id) ? (
                   <HourglassBottomIcon />
@@ -295,9 +295,15 @@ const handleFinishGroup = async () => {
                   <CheckCircleIcon color="disabled" />
                 )}
               </IconButton>
+
+
+    {!row.isFinished && (
               <IconButton onClick={() => handleEditProduct(row)}>
                 <EditIcon />
               </IconButton>
+    )}
+
+
               <IconButton
                 onClick={() => {
                   setProductToDelete(row.id);
@@ -578,7 +584,7 @@ const handleFinishGroup = async () => {
                                     isFinished: groupedRow.isFinished,
                                   })
                                 }
-                                disabled={processing.includes(groupedRow.id)}
+                           disabled={processing.includes(row.id) || row.isFinished} 
                               >
                                 {processing.includes(groupedRow.id) ? (
                                   <HourglassBottomIcon />
@@ -592,7 +598,9 @@ const handleFinishGroup = async () => {
                                   <CheckCircleIcon color="disabled" />
                                 )}
                               </IconButton>
-                              {AdminPageName === "AdminFinishedOrders"?(null):(
+                           
+    {!row.isFinished && (
+
                               <IconButton
                                 onClick={() => handleEditProduct(groupedRow)}
                               >
