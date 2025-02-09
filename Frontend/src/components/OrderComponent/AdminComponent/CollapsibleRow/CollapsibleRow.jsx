@@ -54,10 +54,25 @@ const CollapsibleRow = ({
       .replace(/-/g, ""); // Convert to "YYMMDD"
   });
   // Check if the row has a GroupId and filter grouped rows
-  const hasGroupId = row.GroupId !== undefined && row.GroupId !== null;
-  const groupedRows = hasGroupId
-    ? rows.filter((r) => r.GroupId === row.GroupId)
+const hasGroupId = row.GroupId !== undefined && row.GroupId !== null;
+const hasOrderNO = row.orderno !== undefined && row.orderno !== null;
+
+let groupedRows;
+
+if (AdminPageName === "AdminMusteriOrders") {
+  groupedRows = hasOrderNO
+    ? rows.filter((r) => r.orderno?.trim().toLowerCase() === row.orderno?.trim().toLowerCase())
     : [row];
+} else {
+  groupedRows = hasGroupId
+    ? rows.filter((r) => r.GroupId === row.GroupId)
+    : hasOrderNO
+    ? rows.filter((r) => r.orderno?.trim().toLowerCase() === row.orderno?.trim().toLowerCase())
+    : [row]; // If neither exists, treat it as an individual row
+}
+
+
+
 
   // Calculate progress based on the row's status
   const getProgress = (row) => {
@@ -130,7 +145,7 @@ const handleFinishGroup = async () => {
       {/* Main Row */}
       <TableRow>
         <TableCell>
-          {hasGroupId && groupedRows.length > 1 && (
+          {(hasGroupId || hasOrderNO) && groupedRows.length > 1 && (
             <IconButton
               aria-label="expand row"
               size="small"
@@ -146,6 +161,17 @@ const handleFinishGroup = async () => {
             onChange={() => handleCheckboxChange(row.id)}
           />
         </TableCell>
+        {AdminPageName === "AdminMusteriOrders" && (
+          <TableCell
+            sx={{
+              color: "var(--primary-text-color)",
+              textAlign: "center",
+              paddingLeft: 5,
+            }}
+          >
+       {row.username}
+          </TableCell>
+        )}
         <TableCell
           sx={{
             color: "var(--primary-text-color)",
@@ -324,7 +350,7 @@ const handleFinishGroup = async () => {
         </TableCell>
       </TableRow>
       {/* Collapsible Group Rows */}
-      {hasGroupId && groupedRows.length > 1 && (
+      {(hasGroupId || hasOrderNO) && groupedRows.length > 1 && (
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -371,6 +397,18 @@ const handleFinishGroup = async () => {
                           onChange={handleSelectAll}
                         />
                       </TableCell>
+
+ {AdminPageName === "AdminMusteriOrders" && (
+          <TableCell
+            sx={{
+              color: "var(--primary-text-color)",
+              textAlign: "center",
+              paddingLeft: 5,
+            }}
+          >
+          username
+          </TableCell>
+        )}
                       <TableCell
                         sx={{
                           color: "var(--primary-text-color)",
@@ -446,7 +484,9 @@ const handleFinishGroup = async () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {groupedRows.map((groupedRow) => (
+                    {groupedRows
+    .filter((groupedRow) => groupedRow.id !== row.id) // Exclude current row
+    .map((groupedRow) =>  (
                       <TableRow
                         sx={{
                           backgroundColor: groupedRow.isFromControlGroup
@@ -464,6 +504,17 @@ const handleFinishGroup = async () => {
                             onChange={() => handleCheckboxChange(groupedRow.id)}
                           />
                         </TableCell>
+ {AdminPageName === "AdminMusteriOrders" && (
+          <TableCell
+            sx={{
+              color: "var(--primary-text-color)",
+              textAlign: "center",
+              paddingLeft: 5,
+            }}
+          >
+       {groupedRow.username}
+          </TableCell>
+        )}
                         <TableCell
                           sx={{
                             color: "var(--primary-text-color)",
