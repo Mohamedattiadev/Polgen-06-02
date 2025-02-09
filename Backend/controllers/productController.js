@@ -126,7 +126,7 @@ export const addProduct = async (req, res) => {
               isOrder: true,
               isFromControlGroup: product.isFromControlGroup || false,
               isApproved: product.isApproved || false,
-              dmt: product.dmt,
+              dmt: product.saflaştırma=== "OPC" ? "DMTOFF" : "DMTON",
               orderno: newOrderNo, // ✅ Assign the same orderno to all products
             },
             { transaction: t }
