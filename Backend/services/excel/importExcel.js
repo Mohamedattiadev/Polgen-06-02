@@ -49,13 +49,13 @@ export const importExcelFile = async (filePath, userId, mode) => {
         },
         sekans: getCellValue(row.getCell(3)),
         uzunluk: parsedLength,
-        saflaştırma: isPrimer ? getCellValue(row.getCell(7)) || null : "DSLT",
+        saflaştırma: isPrimer ? getCellValue(row.getCell(7)) || null : null,
         scale: isPrimer ? getCellValue(row.getCell(6)) || "50 nmol" : "200 nmol",
         totalPrice: parsedPrice,
         oligoAdi: getCellValue(row.getCell(1)) || `Imported Product ${rowIndex}`,
         quantity: 1,
         userId,
-        dmt: isPrimer ? (getCellValue(row.getCell(7)) === "OPC" ? "DMTOFF" : "DMTON") : "DMTON",
+        dmt: isPrimer ? (getCellValue(row.getCell(7)) === "OPC" ? "DMTOFF" : "DMTON") : "DMTOFF",
         orderno: newOrderNo,
       });
     });
