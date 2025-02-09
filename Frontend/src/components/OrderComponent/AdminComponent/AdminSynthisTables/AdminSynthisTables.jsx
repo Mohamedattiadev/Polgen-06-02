@@ -74,20 +74,70 @@ const AdminSynthisTables = ({ filterCondition, AdminPageName }) => {
   //   return 0; // Reset if it's a new day
   // });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getProducts();
-        setRows(data);
-      } catch (error) {
-        setError("Failed to load products. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchData();
-  }, []);
+
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = await getProducts();
+      console.log("Fetched products:", data);
+
+      const updatedRows = await Promise.all(
+        data.map(async (product) => {
+          console.log("Processing product:", product);
+          
+          if (!product.userId) {
+            console.warn("Missing userId for product:", product);
+            return { ...product, username: "Unknown" };
+          }
+
+          try {
+   const user = await getUserById(product.userId);
+console.log(`User fetched for ID ${product.userId}:`, user);
+
+const username = user?.user?.username || "Unknown";  // Fix applied
+const modifiedUsername = product.oligoAdi?.startsWith("gt")
+  ? `gt${username}`
+  : username;
+
+console.log("Final username:", modifiedUsername);
+return { ...product, username: modifiedUsername };
+
+          } catch (error) {
+            console.error("Error fetching user:", error);
+            return { ...product, username: "Unknown" };
+          }
+        })
+      );
+
+      setRows(updatedRows);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setError("Failed to load products. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const data = await getProducts();
+  //       setRows(data);
+  //     } catch (error) {
+  //       setError("Failed to load products. Please try again later.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   // useEffect(() => {
   //   const today = new Date().toDateString();
@@ -441,13 +491,18 @@ const handleBulkIsWorkingOn = async () => {
     });
   };
 
-  const visibleRows = useMemo(() => {
-    const sortedData = sortRows(filteredRows, order, orderBy);
-    return sortedData.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage,
-    );
-  }, [filteredRows, order, orderBy, page, rowsPerPage]);
+const visibleRows = useMemo(() => {
+  const sortedData = sortRows(filteredRows, order, orderBy);
+
+  const uniqueOrderGroups = new Set();
+  
+  return sortedData.filter((row) => {
+    const identifier = row.GroupId || row.orderno || row.id; // Use GroupId if exists, otherwise orderno
+    if (uniqueOrderGroups.has(identifier)) return false; // Prevent duplicates
+    uniqueOrderGroups.add(identifier);
+    return true;
+  }).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+}, [filteredRows, order, orderBy, page, rowsPerPage]);
 
   if (loading) {
     return (
@@ -653,7 +708,22 @@ const handleBulkIsWorkingOn = async () => {
             <TableCell>
               <Checkbox disabled />
             </TableCell>
-
+        {AdminPageName === "AdminMusteriOrders" && (
+            <TableCell
+              sx={{
+                color: "var(--primary-text-color)",
+                textAlign: "center",
+                textWrap: "nowrap",
+              }}
+            >
+              <TableSortLabel
+                active={orderBy === "username"}
+                direction={orderBy === "username" ? order : "asc"}
+                onClick={(event) => handleRequestSort(event, "index")}
+              />
+          username
+          </TableCell>
+        )}
             <TableCell
               sx={{
                 color: "var(--primary-text-color)",
@@ -797,7 +867,7 @@ const handleBulkIsWorkingOn = async () => {
                     : "inherit",
               }}
               key={row.id}
-              row={row}
+     row={{ ...row, username: row.username }} // Pass username
               rows={rows}
               setRows={setRows} // Pass setRows here
               handleCheckboxChange={handleCheckboxChange}
