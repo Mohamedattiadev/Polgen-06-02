@@ -1,83 +1,66 @@
 import Excel from "exceljs";
 import fs from "fs";
-import Product from "../../models/Product.js"; // ✅ Correct path
-import User from "../../models/User.js"; // ✅ Import User model
+import Product from "../../models/Product.js";
+import User from "../../models/User.js";
 
 export const importExcelFile = async (filePath, userId, mode) => {
-  const category = (mode || "").toString().trim().toLowerCase() === "primer" ? "primer" : "probe";
+  const category = (mode || "").toString().trim().toLowerCase();
+  const isPrimer = category === "primer";
 
   try {
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(filePath);
-
-    const sheet = workbook.getWorksheet(2); // Access the second sheet
-    if (!sheet) {
-      throw new Error("No valid worksheet found");
-    }
+    const sheet = workbook.getWorksheet(2);
+    if (!sheet) throw new Error("No valid worksheet found");
 
     const user = await User.findByPk(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    if (!user) throw new Error("User not found");
 
-    console.log("🔥 User Before Import:", user.toJSON());
-
-    // ✅ Increase user's orderno by 1
     const newOrderNo = (parseInt(user.orderno, 10) + 1).toString().padStart(4, "0");
     await user.update({ orderno: newOrderNo });
 
-    console.log("✅ User After Import:", await user.reload());
-
-    const products = [];
-
-    // ✅ Fetch the current max index to continue numbering
     const maxIndex = (await Product.max("index")) || 0;
     let newIndex = maxIndex + 1;
+    const products = [];
+
+    const getCellValue = (cell) => {
+      if (!cell) return "";
+      if (typeof cell === "object" && cell.richText) {
+        return cell.richText.map((r) => r.text).join("");
+      }
+      return cell.result !== undefined ? cell.result.toString() : cell.toString();
+    };
 
     sheet.eachRow((row, rowIndex) => {
-      if (rowIndex < 21) return; // Skip first 20 rows
+      if (rowIndex < 21 || !row.getCell(1).value) return;
 
-      if (!row.getCell(1).value) {
-        console.log(`Skipping row ${rowIndex} as the first cell is empty.`);
-        return;
-      }
-
-      const priceCell = row.getCell(8).value;
-      const parsedPrice =
-        priceCell && priceCell.result !== undefined
-          ? priceCell.result.toFixed(2)
-          : (priceCell || 0).toFixed(2);
-
-      const lengthCell = row.getCell(5).value;
-      const parsedLength =
-        lengthCell && typeof lengthCell.result !== undefined
-          ? lengthCell.result
-          : lengthCell || 0;
+      const priceCell = getCellValue(row.getCell(isPrimer ? 8 : 6));
+      const parsedPrice = parseFloat(priceCell) ? parseFloat(priceCell).toFixed(2) : "0.00";
+      
+      const lengthCell = getCellValue(row.getCell(5));
+      const parsedLength = parseInt(lengthCell) || 0;
 
       products.push({
-        index: newIndex++, // ✅ Ensure index is assigned properly
-        category: category,
+        index: newIndex++,
+        category,
         modifications: {
-          fivePrime: row.getCell(2).value || "",
-          threePrime: row.getCell(4).value || "",
+          fivePrime: getCellValue(row.getCell(2)),
+          threePrime: getCellValue(row.getCell(4)),
         },
-        sekans: row.getCell(3).value || "",
+        sekans: getCellValue(row.getCell(3)),
         uzunluk: parsedLength,
-        saflaştırma: row.getCell(7).value || null,
-        scale: row.getCell(6).value || "50 nmol",
+        saflaştırma: isPrimer ? getCellValue(row.getCell(7)) || null : "DSLT",
+        scale: isPrimer ? getCellValue(row.getCell(6)) || "50 nmol" : "200 nmol",
         totalPrice: parsedPrice,
-        oligoAdi: row.getCell(1).value || `Imported Product ${rowIndex}`,
+        oligoAdi: getCellValue(row.getCell(1)) || `Imported Product ${rowIndex}`,
         quantity: 1,
-        userId: userId,
-        dmt: row.getCell(7).value === "OPC" ? "DMTOFF" : "DMTON", // ✅ Assign DMT value
-        orderno: newOrderNo, // ✅ Assign the same orderno for all imported products
+        userId,
+        dmt: isPrimer ? (getCellValue(row.getCell(7)) === "OPC" ? "DMTOFF" : "DMTON") : "DMTON",
+        orderno: newOrderNo,
       });
     });
 
-    fs.unlinkSync(filePath); // Delete the file after processing
-
-    console.log("📦 Imported Products:", JSON.stringify(products, null, 2));
-
+    fs.unlinkSync(filePath);
     return products;
   } catch (error) {
     console.error("❌ Error processing Excel file:", error.message);
