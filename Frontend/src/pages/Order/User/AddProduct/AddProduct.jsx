@@ -21,6 +21,25 @@ const AddProduct = () => {
   const [numberOfProducts, setNumberOfProducts] = useState(1);
   const [file, setFile] = useState(null); // State for storing the selected file
   const [mode, setMode] = useState("primer"); // New state for mode (primer/probe)
+const isFormValid = () => {
+  return (
+    products.length > 0 && // Ensure there's at least one product
+    products.some((product) => product.selected) && // At least one selected product
+    products.every((product) => {
+      return (
+        product.oligoAdi.trim() && // Ensure Oligo Name is not empty
+        product.sekans?.trim() && // Ensure Sekans is not empty
+        product.uzunluk > 0 && // Uzunluk must be greater than 0
+        product.scale !== "50 nmol" && // Ensure user changed the default scale (adjust if needed)
+        product.modifications?.fivePrime !== "" && // Ensure 5' Modification is selected
+        product.modifications?.threePrime !== "" && // Ensure 3' Modification is selected
+        (product.category !== "prime" || product.saflaştırma !== "") // Ensure purification is set for prime category
+      );
+    })
+  );
+};
+
+
 
   useEffect(() => {
     if (!userProfile || userProfile.username !== urlUsername) {
@@ -350,13 +369,21 @@ const handleDownloadPrimerTemplate = async () => {
           </div>
         </div>
         <div className={styles.formRow}>
-          <button
+          {/* <button
             className={styles.submitButton}
             type="submit"
             disabled={products.every((p) => !p.selected)}
           >
             Submit
-          </button>
+          </button> */}
+<button
+  className={styles.submitButton}
+  type="submit"
+  disabled={!isFormValid()} // Disable if validation fails
+>
+  Submit
+</button>
+
           <div className={styles.totalPrice}>
             Total Price: {totalPrice.toFixed(2)} €
           </div>
