@@ -74,55 +74,51 @@ const AdminSynthisTables = ({ filterCondition, AdminPageName }) => {
   //   return 0; // Reset if it's a new day
   // });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getProducts();
+        console.log("Fetched products:", data);
 
+        const updatedRows = await Promise.all(
+          data.map(async (product) => {
+            console.log("Processing product:", product);
 
+            if (!product.userId) {
+              console.warn("Missing userId for product:", product);
+              return { ...product, username: "Unknown" };
+            }
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const data = await getProducts();
-      console.log("Fetched products:", data);
+            try {
+              const user = await getUserById(product.userId);
+              console.log(`User fetched for ID ${product.userId}:`, user);
 
-      const updatedRows = await Promise.all(
-        data.map(async (product) => {
-          console.log("Processing product:", product);
-          
-          if (!product.userId) {
-            console.warn("Missing userId for product:", product);
-            return { ...product, username: "Unknown" };
-          }
+              const username = user?.user?.username || "Unknown"; // Fix applied
+              const modifiedUsername = product.oligoAdi?.startsWith("gt")
+                ? `gt${username}`
+                : username;
 
-          try {
-   const user = await getUserById(product.userId);
-console.log(`User fetched for ID ${product.userId}:`, user);
+              console.log("Final username:", modifiedUsername);
+              return { ...product, username: modifiedUsername };
+            } catch (error) {
+              console.error("Error fetching user:", error);
+              return { ...product, username: "Unknown" };
+            }
+          }),
+        );
 
-const username = user?.user?.username || "Unknown";  // Fix applied
-const modifiedUsername = product.oligoAdi?.startsWith("gt")
-  ? `gt${username}`
-  : username;
+        setRows(updatedRows);
+        console.log("Updated rows:", updatedRows);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setError("Failed to load products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-console.log("Final username:", modifiedUsername);
-return { ...product, username: modifiedUsername };
-
-          } catch (error) {
-            console.error("Error fetching user:", error);
-            return { ...product, username: "Unknown" };
-          }
-        })
-      );
-
-      setRows(updatedRows);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setError("Failed to load products. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []);
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -322,32 +318,36 @@ return { ...product, username: modifiedUsername };
   //   }
   // };
 
-const handleBulkIsWorkingOn = async () => {
-  const bulkWorkingOnIds = selectedProducts.filter(
-    (id) => !rows.find((row) => row.id === id)?.isWorkingOn
-  );
-
-  if (bulkWorkingOnIds.length === 0) return;
-
-  setProcessing((prev) => [...prev, ...bulkWorkingOnIds]);
-
-  try {
-    const updatedProducts = rows.map((row) =>
-      bulkWorkingOnIds.includes(row.id) ? { ...row, isWorkingOn: true } : row
+  const handleBulkIsWorkingOn = async () => {
+    const bulkWorkingOnIds = selectedProducts.filter(
+      (id) => !rows.find((row) => row.id === id)?.isWorkingOn,
     );
 
-    await updateProduct("all", { productIds: bulkWorkingOnIds, isWorkingOn: true });
+    if (bulkWorkingOnIds.length === 0) return;
 
-    setRows(updatedProducts);
-    setFilteredData(updatedProducts);
-    setSelectedProducts([]);
-  } catch (error) {
-    console.error("Error:", error);
-  } finally {
-    setProcessing((prev) => prev.filter((id) => !bulkWorkingOnIds.includes(id)));
-  }
-};
+    setProcessing((prev) => [...prev, ...bulkWorkingOnIds]);
 
+    try {
+      const updatedProducts = rows.map((row) =>
+        bulkWorkingOnIds.includes(row.id) ? { ...row, isWorkingOn: true } : row,
+      );
+
+      await updateProduct("all", {
+        productIds: bulkWorkingOnIds,
+        isWorkingOn: true,
+      });
+
+      setRows(updatedProducts);
+      setFilteredData(updatedProducts);
+      setSelectedProducts([]);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setProcessing((prev) =>
+        prev.filter((id) => !bulkWorkingOnIds.includes(id)),
+      );
+    }
+  };
 
   // const handleBulkApprove = async () => {
   //   const bulkApproveIds = selectedProducts.filter(
@@ -491,18 +491,20 @@ const handleBulkIsWorkingOn = async () => {
     });
   };
 
-const visibleRows = useMemo(() => {
-  const sortedData = sortRows(filteredRows, order, orderBy);
+  const visibleRows = useMemo(() => {
+    const sortedData = sortRows(filteredRows, order, orderBy);
 
-  const uniqueOrderGroups = new Set();
-  
-  return sortedData.filter((row) => {
-    const identifier = row.GroupId || row.orderno || row.id; // Use GroupId if exists, otherwise orderno
-    if (uniqueOrderGroups.has(identifier)) return false; // Prevent duplicates
-    uniqueOrderGroups.add(identifier);
-    return true;
-  }).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-}, [filteredRows, order, orderBy, page, rowsPerPage]);
+    const uniqueOrderGroups = new Set();
+
+    return sortedData
+      .filter((row) => {
+        const identifier = row.GroupId || row.orderno || row.id; // Use GroupId if exists, otherwise orderno
+        if (uniqueOrderGroups.has(identifier)) return false; // Prevent duplicates
+        uniqueOrderGroups.add(identifier);
+        return true;
+      })
+      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }, [filteredRows, order, orderBy, page, rowsPerPage]);
 
   if (loading) {
     return (
@@ -708,22 +710,22 @@ const visibleRows = useMemo(() => {
             <TableCell>
               <Checkbox disabled />
             </TableCell>
-        {AdminPageName === "AdminMusteriOrders" && (
-            <TableCell
-              sx={{
-                color: "var(--primary-text-color)",
-                textAlign: "center",
-                textWrap: "nowrap",
-              }}
-            >
-              <TableSortLabel
-                active={orderBy === "username"}
-                direction={orderBy === "username" ? order : "asc"}
-                onClick={(event) => handleRequestSort(event, "index")}
-              />
-          username
-          </TableCell>
-        )}
+            {AdminPageName === "AdminMusteriOrders" && (
+              <TableCell
+                sx={{
+                  color: "var(--primary-text-color)",
+                  textAlign: "center",
+                  textWrap: "nowrap",
+                }}
+              >
+                <TableSortLabel
+                  active={orderBy === "username"}
+                  direction={orderBy === "username" ? order : "asc"}
+                  onClick={(event) => handleRequestSort(event, "index")}
+                />
+                username
+              </TableCell>
+            )}
             <TableCell
               sx={{
                 color: "var(--primary-text-color)",
@@ -736,9 +738,7 @@ const visibleRows = useMemo(() => {
                 direction={orderBy === "index" ? order : "asc"}
                 onClick={(event) => handleRequestSort(event, "index")}
               />
-   {AdminPageName==="AdminMusteriOrders"?
-                        
-                      ("OrderNO"):("#")}
+              {AdminPageName === "AdminMusteriOrders" ? "OrderNO" : "#"}
             </TableCell>
 
             {AdminPageName === "AdminSynthingOrders" ? (
@@ -844,7 +844,6 @@ const visibleRows = useMemo(() => {
                 textAlign: "center",
                 textWrap: "nowrap",
                 paddingLeft: 4,
-
               }}
             >
               Actions
@@ -867,7 +866,7 @@ const visibleRows = useMemo(() => {
                     : "inherit",
               }}
               key={row.id}
-     row={{ ...row, username: row.username }} // Pass username
+              row={{ ...row, username: row.username }} // Pass username
               rows={rows}
               setRows={setRows} // Pass setRows here
               handleCheckboxChange={handleCheckboxChange}

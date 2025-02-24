@@ -10,17 +10,18 @@ const ProductComponent = ({
   onUpdate,
 }) => {
   const [data, setData] = useState({ ...productData });
+  const [isFormValidState, setIsFormValidState] = useState(false); // Track form validity
 
-  console.log(data)
+  console.log(data);
 
   useEffect(() => {
-  if (!data.scale) {
-    setData((prev) => ({
-      ...prev,
-      scale: category === "prime" ? "50 nmol" : "200 nmol",
-    }));
-  }
-}, [category]); // Runs when category changes
+    if (!data.scale) {
+      setData((prev) => ({
+        ...prev,
+        scale: category === "prime" ? "50 nmol" : "200 nmol",
+      }));
+    }
+  }, [category]); // Runs when category changes
 
   //
   //--------------------------
@@ -59,19 +60,34 @@ const ProductComponent = ({
       price += getPrice(
         category,
         "fivePrimeModifications",
-        data.modifications.fivePrime,
+        data.modifications.fivePrime
       );
     }
     if (data.modifications.threePrime) {
       price += getPrice(
         category,
         "threePrimeModifications",
-        data.modifications.threePrime,
+        data.modifications.threePrime
       );
     }
     return price;
   };
 
+  // useEffect(() => {
+  //   const totalPrice = calculateTotalPrice();
+  //   if (totalPrice !== data.totalPrice) {
+  //     const updatedData = { ...data, totalPrice };
+  //     setData(updatedData);
+  //     onUpdate(updatedData, index);
+  //   }
+  // }, [
+  //   data.modifications,
+  //   data.saflaştırma,
+  //   data.scale,
+  //   data.oligoAdi,
+  //   data.sekans,
+  //   data.uzunluk,
+  // ]);
   useEffect(() => {
     const totalPrice = calculateTotalPrice();
     if (totalPrice !== data.totalPrice) {
@@ -79,6 +95,9 @@ const ProductComponent = ({
       setData(updatedData);
       onUpdate(updatedData, index);
     }
+
+    // Update form validation state whenever relevant data changes
+    setIsFormValidState(isFormValid()); // Ensure form validation state is updated
   }, [
     data.modifications,
     data.saflaştırma,
@@ -87,6 +106,18 @@ const ProductComponent = ({
     data.sekans,
     data.uzunluk,
   ]);
+
+  const isFormValid = () => {
+    return (
+      data.oligoAdi?.trim() &&
+      data.sekans?.trim() &&
+      data.uzunluk > 0 &&
+      data.scale !== "50 nmol" && // Adjust based on what you need
+      data.modifications?.fivePrime &&
+      data.modifications?.threePrime &&
+      (category !== "prime" || data.saflaştırma) // Purification required for prime
+    );
+  };
 
   return (
     <div className={styles.productComponent}>
@@ -133,7 +164,7 @@ const ProductComponent = ({
               {Object.keys(
                 category === "prime"
                   ? primerData.fivePrimeModifications
-                  : propData.fivePrimeModifications,
+                  : propData.fivePrimeModifications
               ).map((option) => (
                 <option key={option} value={option}>
                   {option}
@@ -160,7 +191,7 @@ const ProductComponent = ({
               {Object.keys(
                 category === "prime"
                   ? primerData.threePrimeModifications
-                  : propData.threePrimeModifications,
+                  : propData.threePrimeModifications
               ).map((option) => (
                 <option key={option} value={option}>
                   {option}
@@ -189,41 +220,37 @@ const ProductComponent = ({
               </select>
             </div>
           )}
-<div className={styles.formGroup}>
-  <label>Synthesis Scale:</label>
-  <select
-    value={data.scale || ""} // Ensures it does not default to 50 nmol
-    onChange={(e) => {
-      const newScale = e.target.value;
-      console.log("Selected scale:", newScale); // Debugging
-      setData((prev) => ({
-        ...prev,
-        scale: newScale, // Ensures the selected value updates
-      }));
-    }}
-  >
-    {(category === "prime"
-      ? ["50 nmol", "100 nmol", "200 nmol"] // Prime allows all
-      : ["200 nmol"] // Prop allows only 200 nmol
-    ).map((scale) => (
-      <option key={scale} value={scale}>
-        {scale}
-      </option>
-    ))}
-  </select>
-</div>
-
-
-
-
-
+          <div className={styles.formGroup}>
+            <label>Synthesis Scale:</label>
+            <select
+              value={data.scale || ""} // Ensures it does not default to 50 nmol
+              onChange={(e) => {
+                const newScale = e.target.value;
+                console.log("Selected scale:", newScale); // Debugging
+                setData((prev) => ({
+                  ...prev,
+                  scale: newScale, // Ensures the selected value updates
+                }));
+              }}
+            >
+              {(category === "prime"
+                ? ["50 nmol", "100 nmol", "200 nmol"] // Prime allows all
+                : ["200 nmol"]
+              ) // Prop allows only 200 nmol
+                .map((scale) => (
+                  <option key={scale} value={scale}>
+                    {scale}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
         <div className={styles.formGroupDown}>
           <div className={styles.formGroup}>
             <label>Oligo Name:</label>
             <input
               type="text"
-              value={data.oligoAdi}
+              value={data.oligoAdi || "oligoAdi"}
               onChange={(e) => {
                 const updatedData = { ...data, oligoAdi: e.target.value };
                 setData(updatedData);
