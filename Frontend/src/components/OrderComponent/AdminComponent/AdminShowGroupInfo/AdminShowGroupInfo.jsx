@@ -4,7 +4,7 @@ import styles from "./AdminShowGroupInfo.module.css";
 import { getGroupById } from "../../../../api/product";
 import AdminDuringProcessTables from "../AdminDuringProcessTables/AdminDuringProcessTables";
 
-const AdminShowGroupInfo = ({ groupId, onClose }) => {
+const AdminShowGroupInfo = ({ groupId, onClose ,AdminPageName}) => {
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -54,7 +54,7 @@ const AdminShowGroupInfo = ({ groupId, onClose }) => {
         ) : (
           <div className={styles.popupContent}>
             <h3>Products in this group:</h3>
-            <AdminDuringProcessTables groupId={groupId} />
+            <AdminDuringProcessTables AdminPageName={AdminPageName} groupId={groupId} />
           </div>
         )}
       </div>

@@ -411,8 +411,38 @@ const AdminDuringProcessTables = ({
       alert("Failed to download CSV file. Please try again.");
     }
   };
-  
-  
+ ///zpllllllllllllllllllllllll 
+  const handleDownloadZPL = async () => {
+    try {
+        const products = filteredRows.map((product) => ({
+            oligoAdi: product.oligoAdi,
+            GroupID: product.GroupID,
+            uzunluk: product.uzunluk,
+            sekans: product.sekans,
+            tm: product.tm,
+            mw: product.mw
+        }));
+
+        console.log("📤 Sending products for ZPL export:", products);
+
+        const response = await axios.post(
+            "http://localhost:3000/generate-zpl",  // Backend URL
+            { products },
+            { responseType: "blob" }  // Dosya indirilecek
+        );
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "etiket.zpl");
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+    } catch (error) {
+        console.error("❌ Error downloading ZPL file:", error);
+        alert("Failed to download ZPL file. Please try again.");
+    }
+};
   
 
   const handleApproveProduct = async (id) => {
@@ -689,17 +719,33 @@ const AdminDuringProcessTables = ({
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {AdminPageName || "Admin Products"}
+            {/* {AdminPageName==="AdminSynthingOrders"&&{()} */}
           </Typography>
 
           <Box sx={{ display: "flex", gap: 2 }}>
+
+{AdminPageName === "AdminFinishedOrders" ? (
+  <>
+      <Button
+              variant="contained"
+              onClick={handleDownloadZPL}
+            >
+              ZPL
+            </Button>
             <Button
               variant="contained"
-              onClick={handleGenerateExcel} // Call the handleGenerateExcel function
-              color="success"
+              color="warning"
+              onClick={console.log("aliyev")}
             >
-              Generate Excel
+            aliyev 
             </Button>
+  </>
+) : null}
+{AdminPageName === "AdminSynthingOrders" ? (
+  <>
+    <Button variant="contained" onClick={handleGenerateExcel} color="success">
+      Generate Excel
+    </Button>
 
             <Button
               variant="contained"
@@ -734,6 +780,9 @@ const AdminDuringProcessTables = ({
             >
               Download CSV
             </Button>
+</>
+
+) : null}
             {AdminPageName === "AdminApprovedOrders" && (
               <Button
                 variant="contained"

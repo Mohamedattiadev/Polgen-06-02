@@ -741,24 +741,20 @@ const AdminSynthisTables = ({ filterCondition, AdminPageName }) => {
               {AdminPageName === "AdminMusteriOrders" ? "OrderNO" : "#"}
             </TableCell>
 
-            {AdminPageName === "AdminSynthingOrders" ? (
-              <TableCell
-                sx={{
-                  color: "var(--primary-text-color)",
-                  textAlign: "center",
-                  textWrap: "nowrap",
-                }}
-              >
-                <TableSortLabel
-                  active={orderBy === "GroupId"}
-                  direction={orderBy === "GroupId" ? order : "asc"}
-                  onClick={(event) => handleRequestSort(event, "GroupId")}
-                />
-                GroupID
-              </TableCell>
-            ) : (
-              " "
-            )}
+            <TableCell
+              sx={{
+                color: "var(--primary-text-color)",
+                textAlign: "center",
+                textWrap: "nowrap",
+              }}
+            >
+              <TableSortLabel
+                active={orderBy === "GroupId"}
+                direction={orderBy === "GroupId" ? order : "asc"}
+                onClick={(event) => handleRequestSort(event, "GroupId")}
+              />
+              GroupID
+            </TableCell>
             <TableCell
               sx={{
                 color: "var(--primary-text-color)",

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import AdminShowGroupInfo from "../AdminShowGroupInfo/AdminShowGroupInfo";
 
@@ -54,25 +55,30 @@ const CollapsibleRow = ({
       .replace(/-/g, ""); // Convert to "YYMMDD"
   });
   // Check if the row has a GroupId and filter grouped rows
-const hasGroupId = row.GroupId !== undefined && row.GroupId !== null;
-const hasOrderNO = row.orderno !== undefined && row.orderno !== null;
+  const hasGroupId = row.GroupId !== undefined && row.GroupId !== null;
+  const hasOrderNO = row.orderno !== undefined && row.orderno !== null;
 
-let groupedRows;
+  let groupedRows;
 
-if (AdminPageName === "AdminMusteriOrders") {
-  groupedRows = hasOrderNO
-    ? rows.filter((r) => r.orderno?.trim().toLowerCase() === row.orderno?.trim().toLowerCase())
-    : [row];
-} else {
-  groupedRows = hasGroupId
-    ? rows.filter((r) => r.GroupId === row.GroupId)
-    : hasOrderNO
-    ? rows.filter((r) => r.orderno?.trim().toLowerCase() === row.orderno?.trim().toLowerCase())
-    : [row]; // If neither exists, treat it as an individual row
-}
-
-
-
+  if (AdminPageName === "AdminMusteriOrders") {
+    groupedRows = hasOrderNO
+      ? rows.filter(
+          (r) =>
+            r.orderno?.trim().toLowerCase() ===
+            row.orderno?.trim().toLowerCase(),
+        )
+      : [row];
+  } else {
+    groupedRows = hasGroupId
+      ? rows.filter((r) => r.GroupId === row.GroupId)
+      : hasOrderNO
+        ? rows.filter(
+            (r) =>
+              r.orderno?.trim().toLowerCase() ===
+              row.orderno?.trim().toLowerCase(),
+          )
+        : [row]; // If neither exists, treat it as an individual row
+  }
 
   // Calculate progress based on the row's status
   const getProgress = (row) => {
@@ -84,44 +90,51 @@ if (AdminPageName === "AdminMusteriOrders") {
   };
 
   // Handle finishing all products in the group
-const handleFinishGroup = async () => {
-  const groupIds = groupedRows.map((r) => r.id);
-  setProcessing((prev) => [...prev, ...groupIds]);
+  const handleFinishGroup = async () => {
+    const groupIds = groupedRows.map((r) => r.id);
+    setProcessing((prev) => [...prev, ...groupIds]);
 
-  try {
-    // ✅ Update all products at once instead of looping
-    await updateProduct("all", { productIds: groupIds, isFinished: true, isWorkingOn: false });
+    try {
+      // ✅ Update all products at once instead of looping
+      await updateProduct("all", {
+        productIds: groupIds,
+        isFinished: true,
+        isWorkingOn: false,
+      });
 
-    // ✅ Update UI
-    const updatedRows = rows.map((r) =>
-      groupIds.includes(r.id) ? { ...r, isFinished: true, isWorkingOn: false } : r
-    );
-    setRows(updatedRows);
+      // ✅ Update UI
+      const updatedRows = rows.map((r) =>
+        groupIds.includes(r.id)
+          ? { ...r, isFinished: true, isWorkingOn: false }
+          : r,
+      );
+      setRows(updatedRows);
 
-    // ✅ Fix: Collect finished products per user
-    const userMap = {};
+      // ✅ Fix: Collect finished products per user
+      const userMap = {};
 
-    groupedRows.forEach((product) => {
-      const userEmail = product.userId; // Assuming `userId` represents the user's email
-      if (!userMap[userEmail]) {
-        userMap[userEmail] = { username: product.username, products: [] };
+      groupedRows.forEach((product) => {
+        const userEmail = product.userId; // Assuming `userId` represents the user's email
+        if (!userMap[userEmail]) {
+          userMap[userEmail] = { username: product.username, products: [] };
+        }
+        userMap[userEmail].products.push(product.oligoAdi);
+      });
+
+      // ✅ Send grouped emails per user
+      for (const [userEmail, { username, products }] of Object.entries(
+        userMap,
+      )) {
+        await sendFinishedEmail(userEmail, username, products);
       }
-      userMap[userEmail].products.push(product.oligoAdi);
-    });
 
-    // ✅ Send grouped emails per user
-    for (const [userEmail, { username, products }] of Object.entries(userMap)) {
-      await sendFinishedEmail(userEmail, username, products);
+      console.log("📧 Finished email sent for all products in group.");
+    } catch (error) {
+      console.error("Failed to finish group:", error);
+    } finally {
+      setProcessing((prev) => prev.filter((id) => !groupIds.includes(id)));
     }
-
-    console.log("📧 Finished email sent for all products in group.");
-  } catch (error) {
-    console.error("Failed to finish group:", error);
-  } finally {
-    setProcessing((prev) => prev.filter((id) => !groupIds.includes(id)));
-  }
-};
-
+  };
 
   // Check if any row in the group is selected
   const isAnyRowSelected = groupedRows.some((r) =>
@@ -169,7 +182,7 @@ const handleFinishGroup = async () => {
               paddingLeft: 5,
             }}
           >
-       {row.username}
+            {row.username}
           </TableCell>
         )}
         <TableCell
@@ -179,13 +192,10 @@ const handleFinishGroup = async () => {
             paddingLeft: 5,
           }}
         >
-     {AdminPageName==="AdminMusteriOrders"?
-                        
-                          (row.orderno):(row.index)}
-
-
+          {AdminPageName === "AdminMusteriOrders" ? row.orderno : row.index}
         </TableCell>
-        {AdminPageName === "AdminSynthingOrders" && (
+        {AdminPageName === "AdminSynthingOrders" ||
+        AdminPageName === "AdminFinishedOrders" ? (
           <TableCell
             sx={{
               color: "var(--primary-text-color)",
@@ -199,7 +209,7 @@ const handleFinishGroup = async () => {
               {row.GroupId || "N/A"}
             </Button>
           </TableCell>
-        )}
+        ) : null}
         <TableCell
           sx={{
             color: "var(--primary-text-color)",
@@ -285,7 +295,7 @@ const handleFinishGroup = async () => {
             paddingLeft: 7,
             borderRadius: "0px",
 
-                            border:"none"
+            border: "none",
           }}
         >
           {/* Show only the delete button for Control Group products */}
@@ -311,7 +321,7 @@ const handleFinishGroup = async () => {
                     isFinished: row.isFinished,
                   })
                 }
-               disabled={processing.includes(row.id) || row.isFinished} 
+                disabled={processing.includes(row.id) || row.isFinished}
               >
                 {processing.includes(row.id) ? (
                   <HourglassBottomIcon />
@@ -326,13 +336,11 @@ const handleFinishGroup = async () => {
                 )}
               </IconButton>
 
-
-    {!row.isFinished && (
-              <IconButton onClick={() => handleEditProduct(row)}>
-                <EditIcon />
-              </IconButton>
-    )}
-
+              {!row.isFinished && (
+                <IconButton onClick={() => handleEditProduct(row)}>
+                  <EditIcon />
+                </IconButton>
+              )}
 
               <IconButton
                 onClick={() => {
@@ -366,25 +374,27 @@ const handleFinishGroup = async () => {
                   <Typography variant="h6" gutterBottom>
                     Group ID: {row.GroupId}
                   </Typography>
-{AdminPageName === "AdminFinishedOrders"||AdminPageName === "AdminMusteriOrders" ? (null):(
-  <Button
-    variant="contained"
-    onClick={handleFinishGroup}
-    disabled={
-      !isAnyRowSelected ||
-      processing.some((id) => groupedRows.some((r) => r.id === id))
-    }
-    sx={{
-      marginBottom: 2,
-      width: "20%",
-      backgroundColor: "var(--error-color)",
-    }}
-    className={styles.finishAllButton}
-  >
-    Finish All
-  </Button>
-)}
-
+                  {AdminPageName === "AdminFinishedOrders" ||
+                  AdminPageName === "AdminMusteriOrders" ? null : (
+                    <Button
+                      variant="contained"
+                      onClick={handleFinishGroup}
+                      disabled={
+                        !isAnyRowSelected ||
+                        processing.some((id) =>
+                          groupedRows.some((r) => r.id === id),
+                        )
+                      }
+                      sx={{
+                        marginBottom: 2,
+                        width: "20%",
+                        backgroundColor: "var(--error-color)",
+                      }}
+                      className={styles.finishAllButton}
+                    >
+                      Finish All
+                    </Button>
+                  )}
                 </Box>
                 <Table size="small">
                   <TableHead>
@@ -398,17 +408,17 @@ const handleFinishGroup = async () => {
                         />
                       </TableCell>
 
- {AdminPageName === "AdminMusteriOrders" && (
-          <TableCell
-            sx={{
-              color: "var(--primary-text-color)",
-              textAlign: "center",
-              paddingLeft: 5,
-            }}
-          >
-          username
-          </TableCell>
-        )}
+                      {AdminPageName === "AdminMusteriOrders" && (
+                        <TableCell
+                          sx={{
+                            color: "var(--primary-text-color)",
+                            textAlign: "center",
+                            paddingLeft: 5,
+                          }}
+                        >
+                          username
+                        </TableCell>
+                      )}
                       <TableCell
                         sx={{
                           color: "var(--primary-text-color)",
@@ -416,9 +426,9 @@ const handleFinishGroup = async () => {
                           paddingLeft: 5,
                         }}
                       >
-                        {AdminPageName==="AdminMusteriOrders"?
-                        
-                      ("OrderNO"):("#")}
+                        {AdminPageName === "AdminMusteriOrders"
+                          ? "OrderNO"
+                          : "#"}
                       </TableCell>
                       <TableCell
                         sx={{
@@ -485,188 +495,147 @@ const handleFinishGroup = async () => {
                   </TableHead>
                   <TableBody>
                     {groupedRows
-    .filter((groupedRow) => groupedRow.id !== row.id) // Exclude current row
-    .map((groupedRow) =>  (
-                      <TableRow
-                        sx={{
-                          backgroundColor: groupedRow.isFromControlGroup
-                            ? "var(--control-group-bg-color)"
-                            : groupedRow.sekans &&
-                                groupedRow.sekans.length >= 50
-                              ? "var(--error-color)"
-                              : "inherit",
-                        }}
-                        key={groupedRow.id}
-                      >
-                        <TableCell sx={{ paddingLeft: 2 }}>
-                          <Checkbox
-                            checked={selectedProducts.includes(groupedRow.id)}
-                            onChange={() => handleCheckboxChange(groupedRow.id)}
-                          />
-                        </TableCell>
- {AdminPageName === "AdminMusteriOrders" && (
-          <TableCell
-            sx={{
-              color: "var(--primary-text-color)",
-              textAlign: "center",
-              paddingLeft: 5,
-            }}
-          >
-       {groupedRow.username}
-          </TableCell>
-        )}
-                        <TableCell
+                      .filter((groupedRow) => groupedRow.id !== row.id) // Exclude current row
+                      .map((groupedRow) => (
+                        <TableRow
                           sx={{
-                            color: "var(--primary-text-color)",
-                            textAlign: "center",
-                            paddingLeft: 5,
+                            backgroundColor: groupedRow.isFromControlGroup
+                              ? "var(--control-group-bg-color)"
+                              : groupedRow.sekans &&
+                                  groupedRow.sekans.length >= 50
+                                ? "var(--error-color)"
+                                : "inherit",
                           }}
+                          key={groupedRow.id}
                         >
-    {AdminPageName==="AdminMusteriOrders"?
-                        
-                          (groupedRow.orderno):(groupedRow.index)}
-
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            color: "var(--primary-text-color)",
-                            textAlign: "center",
-                            paddingLeft: 5,
-                          }}
-                        >
-                          {new Date(groupedRow.createdAt).toLocaleString(
-                            "en-CA",
-                            {
-                              dateStyle: "short",
-                              timeStyle: "short",
-                              hour12: false,
-                            },
-                          )}
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            color: "var(--primary-text-color)",
-                            textAlign: "center",
-                            paddingLeft: 5,
-                          }}
-                        >
-                          <Button
-                            sx={{
-                              color:
-                                groupedRow.sekans &&
-                                groupedRow.sekans.length >= 50
-                                  ? "var(--primary-bg-color)"
-                                  : "var(--error-color)",
-                              padding: "11px 27px",
-                            }}
-                            onClick={() => setSelectedUser(groupedRow.userId)}
-                          >
-                            {groupedRow.userId
-                              ? groupedRow.userId.split("-")[0]
-                              : "Unknown"}
-                          </Button>
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            color: "var(--primary-text-color)",
-                            textAlign: "center",
-                            paddingLeft: 5,
-                          }}
-                        >
-                          {groupedRow.category}
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            color: "var(--primary-text-color)",
-                            textAlign: "center",
-                          }}
-                        >
-                          {groupedRow.totalPrice || "N/A"}
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            color: "var(--primary-text-color)",
-                            textAlign: "start",
-                            paddingLeft: 4.5,
-                          }}
-                        >
-                          {groupedRow.isFinished
-                            ? "Finished"
-                            : groupedRow.isWorkingOn
-                              ? "In Progress"
-                              : groupedRow.isApproved
-                                ? "Approved"
-                                : "Ordered"}
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            padding: 4,
-                          }}
-                        >
-                          <LinearProgress
-                            variant="determinate"
-                            value={getProgress(groupedRow)}
-                            sx={{
-                              backgroundColor: "var(--disabled-bg-color)",
-                              "& .MuiLinearProgress-bar": {
-                                backgroundColor: "var(--accent-color)",
-                              },
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell
-                          sx={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr 1fr",
-                            gridTemplateRows: "1fr 1fr",
-                            gap: "7px",
-                            paddingLeft: 7,
-                          }}
-                        >
-                          {/* Show only the delete button for Control Group products */}
-                          {groupedRow.isFromControlGroup ? (
-                            <IconButton
-                              onClick={() => {
-                                setProductToDelete(groupedRow.id);
-                                setShowDeleteModal(true);
+                          <TableCell sx={{ paddingLeft: 2 }}>
+                            <Checkbox
+                              checked={selectedProducts.includes(groupedRow.id)}
+                              onChange={() =>
+                                handleCheckboxChange(groupedRow.id)
+                              }
+                            />
+                          </TableCell>
+                          {AdminPageName === "AdminMusteriOrders" && (
+                            <TableCell
+                              sx={{
+                                color: "var(--primary-text-color)",
+                                textAlign: "center",
+                                paddingLeft: 5,
                               }}
                             >
-                              <DeleteIcon color="error" />
-                            </IconButton>
-                          ) : (
-                            <>
-                              {/* Show all buttons for non-Control Group products */}
-                              <IconButton
-                                onClick={() =>
-                                  handleNextStatus(groupedRow.id, {
-                                    isApproved: groupedRow.isApproved,
-                                    isWorkingOn: groupedRow.isWorkingOn,
-                                    isFinished: groupedRow.isFinished,
-                                  })
-                                }
-                           disabled={processing.includes(row.id) || row.isFinished} 
-                              >
-                                {processing.includes(groupedRow.id) ? (
-                                  <HourglassBottomIcon />
-                                ) : groupedRow.isFinished ? (
-                                  <CheckCircleIcon color="success" />
-                                ) : groupedRow.isWorkingOn ? (
-                                  <CheckCircleIcon color="warning" />
-                                ) : groupedRow.isApproved ? (
-                                  <CheckCircleIcon color="primary" />
-                                ) : (
-                                  <CheckCircleIcon color="disabled" />
-                                )}
-                              </IconButton>
-                           
-    {!row.isFinished && (
-
-                              <IconButton
-                                onClick={() => handleEditProduct(groupedRow)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                              )}
+                              {groupedRow.username}
+                            </TableCell>
+                          )}
+                          <TableCell
+                            sx={{
+                              color: "var(--primary-text-color)",
+                              textAlign: "center",
+                              paddingLeft: 5,
+                            }}
+                          >
+                            {AdminPageName === "AdminMusteriOrders"
+                              ? groupedRow.orderno
+                              : groupedRow.index}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "var(--primary-text-color)",
+                              textAlign: "center",
+                              paddingLeft: 5,
+                            }}
+                          >
+                            {new Date(groupedRow.createdAt).toLocaleString(
+                              "en-CA",
+                              {
+                                dateStyle: "short",
+                                timeStyle: "short",
+                                hour12: false,
+                              },
+                            )}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "var(--primary-text-color)",
+                              textAlign: "center",
+                              paddingLeft: 5,
+                            }}
+                          >
+                            <Button
+                              sx={{
+                                color:
+                                  groupedRow.sekans &&
+                                  groupedRow.sekans.length >= 50
+                                    ? "var(--primary-bg-color)"
+                                    : "var(--error-color)",
+                                padding: "11px 27px",
+                              }}
+                              onClick={() => setSelectedUser(groupedRow.userId)}
+                            >
+                              {groupedRow.userId
+                                ? groupedRow.userId.split("-")[0]
+                                : "Unknown"}
+                            </Button>
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "var(--primary-text-color)",
+                              textAlign: "center",
+                              paddingLeft: 5,
+                            }}
+                          >
+                            {groupedRow.category}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "var(--primary-text-color)",
+                              textAlign: "center",
+                            }}
+                          >
+                            {groupedRow.totalPrice || "N/A"}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              color: "var(--primary-text-color)",
+                              textAlign: "start",
+                              paddingLeft: 4.5,
+                            }}
+                          >
+                            {groupedRow.isFinished
+                              ? "Finished"
+                              : groupedRow.isWorkingOn
+                                ? "In Progress"
+                                : groupedRow.isApproved
+                                  ? "Approved"
+                                  : "Ordered"}
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              padding: 4,
+                            }}
+                          >
+                            <LinearProgress
+                              variant="determinate"
+                              value={getProgress(groupedRow)}
+                              sx={{
+                                backgroundColor: "var(--disabled-bg-color)",
+                                "& .MuiLinearProgress-bar": {
+                                  backgroundColor: "var(--accent-color)",
+                                },
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell
+                            sx={{
+                              display: "grid",
+                              gridTemplateColumns: "1fr 1fr",
+                              gridTemplateRows: "1fr 1fr",
+                              gap: "7px",
+                              paddingLeft: 7,
+                            }}
+                          >
+                            {/* Show only the delete button for Control Group products */}
+                            {groupedRow.isFromControlGroup ? (
                               <IconButton
                                 onClick={() => {
                                   setProductToDelete(groupedRow.id);
@@ -675,16 +644,62 @@ const handleFinishGroup = async () => {
                               >
                                 <DeleteIcon color="error" />
                               </IconButton>
-                              <IconButton
-                                onClick={() => handleEmail(groupedRow)}
-                              >
-                                <MailIcon color="primary" />
-                              </IconButton>
-                            </>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                            ) : (
+                              <>
+                                {/* Show all buttons for non-Control Group products */}
+                                <IconButton
+                                  onClick={() =>
+                                    handleNextStatus(groupedRow.id, {
+                                      isApproved: groupedRow.isApproved,
+                                      isWorkingOn: groupedRow.isWorkingOn,
+                                      isFinished: groupedRow.isFinished,
+                                    })
+                                  }
+                                  disabled={
+                                    processing.includes(row.id) ||
+                                    row.isFinished
+                                  }
+                                >
+                                  {processing.includes(groupedRow.id) ? (
+                                    <HourglassBottomIcon />
+                                  ) : groupedRow.isFinished ? (
+                                    <CheckCircleIcon color="success" />
+                                  ) : groupedRow.isWorkingOn ? (
+                                    <CheckCircleIcon color="warning" />
+                                  ) : groupedRow.isApproved ? (
+                                    <CheckCircleIcon color="primary" />
+                                  ) : (
+                                    <CheckCircleIcon color="disabled" />
+                                  )}
+                                </IconButton>
+
+                                {!row.isFinished && (
+                                  <IconButton
+                                    onClick={() =>
+                                      handleEditProduct(groupedRow)
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                )}
+                                <IconButton
+                                  onClick={() => {
+                                    setProductToDelete(groupedRow.id);
+                                    setShowDeleteModal(true);
+                                  }}
+                                >
+                                  <DeleteIcon color="error" />
+                                </IconButton>
+                                <IconButton
+                                  onClick={() => handleEmail(groupedRow)}
+                                >
+                                  <MailIcon color="primary" />
+                                </IconButton>
+                              </>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </Box>
@@ -696,6 +711,7 @@ const handleFinishGroup = async () => {
         <AdminShowGroupInfo
           groupId={selectedGroup}
           onClose={() => setSelectedGroup(null)}
+          AdminPageName={AdminPageName}
         />
       )}
     </React.Fragment>
