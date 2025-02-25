@@ -74,6 +74,127 @@ export const exportProductsCsv = async (req, res) => {
 
 
 
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Function to shorten the sequence if it exceeds 25 characters
+const shortenSekans = (sekans, maxLength = 25) => {
+  if (sekans.length <= maxLength) return sekans;
+  const partLength = Math.floor((maxLength - 3) / 2); // Keep both sides, replace middle with "..."
+  return sekans.slice(0, partLength) + "..." + sekans.slice(-partLength);
+};
+// ZPL dosyası oluşturma fonksiyonu (Daha kompakt hale getirildi)
+const generateZPL = (data) => {
+  const isFiveModified = data.modifications?.fivePrime?.trim(); // Check if fivePrime has value
+  const isThreeModified = data.modifications?.threePrime?.trim(); // Check if threePrime has value
+  let formattedSekans = isFiveModified ? `5'${data.sekans}` : data.sekans;
+  formattedSekans = isThreeModified ? `${formattedSekans}3'` : formattedSekans;
+  formattedSekans = shortenSekans(formattedSekans); // Apply length limit
+  
+  const sentezNo = `${getFormattedDate()}-${data.GroupId || "N/A"}-${data.index || "N/A"}`;
+
+  return `
+^XA
+^CI28  ; UTF-8 desteği
+
+^FO30,10^A0N,20,20^FD${data.oligoAdi}^FS  ; Oligo Adı
+^FO30,50^A0N,18,18^FD${sentezNo}   ${data.uzunluk}bp^FS  ; GroupID ve Uzunluk
+^FO30,75^A0N,18,18^FD${formattedSekans}^FS  ; Sekans
+^FO30,100^A0N,18,18^FDTM:${data.tm}°C    MW:${data.mw}^FS  ; TM ve MW değerleri
+
+
+^FO30,120^GFA,714,714,17,,::005,00A,00B,00DV02002I04001,015R08I02004I05001,00DR0CI02002I04001,015Q01CI028K04001,02AQ01EI02L0A0014,02S0CI02L04001,0AK03E0782D1F05C34K050018,34K0FF1FEFFDFCFF55821F0A7D17A,581CI0FF5FF7FDFAFF5AA125A40A5AA,683C001F53EKF5FFAA8A324AA5495,301E001C278FF2FE3C3E06490A401282,B83E001E0387E0FC183D052405A01A828,281E001E0707E0FC3C7C02AA05402901,141DI0FC79FE0FC397A82AA02A095028,0406I0FEBFF70FE3FF502480542EA81,02828007F7FDE0FC3FF202A502AB2A01,0281I01IF460FC3F820554055415814,02A0EI07FC0E0FC1E05024A02AA1402,01C1F8003F80F0FE3802052405540B014,02A0F8007F80E0FC3E2284AA85542943,01C0FC0D7BFEE0FF9FAA2A422A541514,0080F81FF5FEE0FFEFF5AA23A8ABDAEB,J0FC0FF2FF60F7AFF2D450DA45515A,I01F80FD0FCD0A785F02I02I0J4,I01F4004M041008,0025A8,00B68,00FC,01FC,00FC,01F8,:00F8,01F,005,002,^FS
+
+^XZ
+    `;
+};
+
+// ZPL dosyası oluştur ve indir
+export const generateZPLFile = async (req, res) => {
+    try {
+        const { products } = req.body;
+        if (!products || !Array.isArray(products) || products.length === 0) {
+            return res.status(400).json({ error: "Geçerli bir ürün listesi gönderin." });
+        }
+        
+        let zplData = products.map(generateZPL).join("\n");
+        const filePath = path.join(__dirname, "etiket.zpl");
+        
+        fs.writeFileSync(filePath, zplData, "utf8");
+        res.download(filePath, "etiket.zpl", () => {
+            fs.unlinkSync(filePath); // Dosyayı indirdikten sonra sil
+        });
+    } catch (error) {
+        console.error("❌ Error generating ZPL file:", error);
+        res.status(500).json({ error: "Failed to generate ZPL file." });
+    }
+};
+
+
+// Kutu Etiketi fonksiyonu - User bazlı sayfa oluşturur
+// Kutu Etiketi fonksiyonu - User bazlı sayfa oluşturur
+const generateKutuEtiketi = async (products) => {
+  const users = {};
+  
+  // Kullanıcıları grupla
+  products.forEach(product => {
+      if (!users[product.userId]) users[product.userId] = [];
+      users[product.userId].push(product);
+  });
+  
+  let zplData = "";
+  for (const userId of Object.keys(users)) {
+      const user = await User.findByPk(userId);
+      const username = user ? user.username : "Unknown";
+      const userProducts = users[userId];
+      for (let i = 0; i < userProducts.length; i += 6) {
+          const pageProducts = userProducts.slice(i, i + 6);
+          
+          zplData += `^XA
+^CI28  ; UTF-8 desteği
+^FO30,20^A0N,22,22^FD ${username}^FS
+^FO30,50^GB500,3,3^FS
+`;
+          
+          let yOffset = 80;
+          pageProducts.forEach(product => {
+              zplData += `^FO30,${yOffset}^A0N,18,18^FD${getFormattedDate()}-${product.GroupId || 'N/A'}-${product.index || 'N/A'}       ${product.oligoAdi}^FS\n`;
+              yOffset += 30;
+          });
+          
+          zplData += "^XZ\n";
+      }
+  };
+  return zplData;
+};
+
+// Kutu Etiketi ZPL dosyası oluştur ve indir
+export const generateKutuEtiketiFile = async (req, res) => {
+  try {
+      const { products } = req.body;
+      if (!products || !Array.isArray(products) || products.length === 0) {
+          return res.status(400).json({ error: "Geçerli bir ürün listesi gönderin." });
+      }
+      
+      const zplData = await generateKutuEtiketi(products);
+      const filePath = path.join(__dirname, "kutu_etiketi.zpl");
+      
+      fs.writeFileSync(filePath, zplData, "utf8");
+      res.download(filePath, "kutu_etiketi.zpl", () => {
+          fs.unlinkSync(filePath); // Dosyayı indirdikten sonra sil
+      });
+  } catch (error) {
+      console.error("❌ Error generating Kutu Etiketi ZPL file:", error);
+      res.status(500).json({ error: "Failed to generate Kutu Etiketi ZPL file." });
+  }
+};
+
+
 
 
 

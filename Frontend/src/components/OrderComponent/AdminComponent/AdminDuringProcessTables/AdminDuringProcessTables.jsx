@@ -414,37 +414,69 @@ const AdminDuringProcessTables = ({
     }
   };
  ///zpllllllllllllllllllllllll 
-  const handleDownloadZPL = async () => {
-    try {
-        const products = filteredRows.map((product) => ({
-            oligoAdi: product.oligoAdi,
-            GroupID: product.GroupID,
-            uzunluk: product.uzunluk,
-            sekans: product.sekans,
-            tm: product.tm,
-            mw: product.mw
-        }));
+ const handleDownloadZPL = async () => {
+  try {
+      const products = filteredRows.map((product) => ({
+          oligoAdi: product.oligoAdi,
+          uzunluk: product.uzunluk,
+          sekans: product.sekans,
+          tm: product.tm,
+          modifications: product.modifications,
+          mw: product.mw,
+          index: product.index || "N/A",
+          GroupId: product.GroupId || "N/A", 
+      }));
 
-        console.log("📤 Sending products for ZPL export:", products);
+      console.log("📤 Sending products for ZPL export:", products);
 
-        const response = await axios.post(
-            "http://localhost:3000/generate-zpl",  // Backend URL
-            { products },
-            { responseType: "blob" }  // Dosya indirilecek
-        );
+      const response = await axios.post(
+          "http://localhost:5000/api/products/generate-zpl",  // Keeping backend in the same file
+          { products },
+          { responseType: "blob" }  // Downloading file
+      );
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "etiket.zpl");
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-    } catch (error) {
-        console.error("❌ Error downloading ZPL file:", error);
-        alert("Failed to download ZPL file. Please try again.");
-    }
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "etiket.zpl");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+  } catch (error) {
+      console.error("❌ Error downloading ZPL file:", error);
+      alert("Failed to download ZPL file. Please try again.");
+  }
 };
+const handleDownloadKutuEtiketi = async () => {
+  try {
+      const products = filteredRows.map((product) => ({
+          userId: product.userId,  // Required for user separation
+          GroupId: product.GroupId || "N/A",
+          oligoAdi: product.oligoAdi || "N/A",
+          index: product.index || "N/A",
+      }));
+
+      console.log("📤 Sending products for Kutu Etiketi export:", products);
+
+      const response = await axios.post(
+          "http://localhost:5000/api/products/generate-kutu-etiketi",  // API endpoint for Kutu Etiketi
+          { products },
+          { responseType: "blob" }  // Downloading file
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "kutu_etiketi.zpl");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+  } catch (error) {
+      console.error("❌ Error downloading Kutu Etiketi ZPL file:", error);
+      alert("Failed to download Kutu Etiketi ZPL file. Please try again.");
+  }
+};
+
   
 
   const handleApproveProduct = async (id) => {
@@ -732,14 +764,14 @@ const AdminDuringProcessTables = ({
               variant="contained"
               onClick={handleDownloadZPL}
             >
-              ZPL
+              Tup Etiketi
             </Button>
             <Button
               variant="contained"
               color="warning"
-              onClick={console.log("aliyev")}
+              onClick={handleDownloadKutuEtiketi}
             >
-            aliyev 
+            Kutu Etiketi 
             </Button>
   </>
 ) : null}

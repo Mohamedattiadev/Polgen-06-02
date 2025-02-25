@@ -11,7 +11,10 @@ import {
   exportProductsCsv,
   cancelSynthesis,
   retryGuarantee,
-} from "../controllers/productController.js";
+  } from "../controllers/productController.js";
+
+import { generateZPLFile } from "../controllers/productController.js";
+import { generateKutuEtiketiFile } from "../controllers/productController.js";  // Import the function
 
 const router = express.Router();
 
@@ -28,5 +31,8 @@ router.get("/groups/:groupId", requireAuth, getGroupById);
 router.post("/export/csv", exportProductsCsv);
 router.post("/cancel-synthesis", cancelSynthesis);
 router.post("/retry-guarantee", retryGuarantee);
+
+router.post("/generate-zpl", generateZPLFile);
+router.post("/generate-kutu-etiketi", generateKutuEtiketiFile);
 
 export default router;
